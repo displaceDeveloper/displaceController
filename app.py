@@ -4,6 +4,7 @@ import struct, time
 from gi.repository import GLib
 from bluezero import adapter, peripheral, device
 from evdev import UInput, ecodes
+import requests
 
 # === Packet format (Little-endian) ===
 # uint8  type
@@ -98,6 +99,12 @@ class App:
 
 
 def main():
+    requests.post('http://127.0.0.1:5564/command', json={
+        "command": "generateCode",
+        "tv_code": "ABCDEF",
+        "pairing_code": "123456"
+    })
+
     adapters = list(adapter.Adapter.available())
     print(f'[BLE] Available adapters ({len(adapters)}):')
     for i, a in enumerate(adapters):

@@ -15,6 +15,8 @@
 #include <QList>
 #include <QObject>
 #include <QVariant>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include <QQmlEngine>
 
@@ -29,8 +31,6 @@ class Device: public QObject
     Q_PROPERTY(QVariant devicesList READ getDevices NOTIFY devicesUpdated)
     Q_PROPERTY(QVariant servicesList READ getServices NOTIFY servicesUpdated)
     Q_PROPERTY(QVariant characteristicList READ getCharacteristics NOTIFY characteristicsUpdated)
-    Q_PROPERTY(QString update READ getUpdate WRITE setUpdate NOTIFY updateChanged)
-    Q_PROPERTY(bool useRandomAddress READ isRandomAddress WRITE setRandomAddress NOTIFY randomAddressChanged)
     Q_PROPERTY(bool state READ state NOTIFY stateChanged)
     Q_PROPERTY(bool controllerError READ hasControllerError)
 
@@ -38,7 +38,7 @@ class Device: public QObject
     QML_SINGLETON
 
 public:
-    Device();
+    Device(QObject *parent=nullptr);
     ~Device();
     QVariant getDevices();
     QVariant getServices();
@@ -46,9 +46,6 @@ public:
     QString getUpdate();
     bool state();
     bool hasControllerError() const;
-
-    bool isRandomAddress() const;
-    void setRandomAddress(bool newValue);
 
 public slots:
     void startDeviceDiscovery();
@@ -80,24 +77,19 @@ Q_SIGNALS:
     void devicesUpdated();
     void servicesUpdated();
     void characteristicsUpdated();
-    void updateChanged();
     void stateChanged();
     void disconnected();
-    void randomAddressChanged();
 
 private:
-    void setUpdate(const QString &message);
     QBluetoothDeviceDiscoveryAgent *discoveryAgent;
     DeviceInfo currentDevice;
     QList<DeviceInfo *> devices;
     QList<ServiceInfo *> m_services;
     QList<CharacteristicInfo *> m_characteristics;
     QString m_previousAddress;
-    QString m_message;
     bool connected = false;
     QLowEnergyController *controller = nullptr;
     bool m_deviceScanState = false;
-    bool randomAddress = false;
 };
 
 #endif // DEVICE_H

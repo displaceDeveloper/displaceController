@@ -5,23 +5,61 @@ import QtQuick.VirtualKeyboard
 
 ApplicationWindow {
     id: window
-    width: 640
-    height: 480
+    width: Global.sizes.width
+    height: Global.sizes.height
     visible: true
     title: qsTr("Remote Control")
 
-    StackLayout {
-        id: pagesLayout
-        anchors.fill: parent
-        anchors.margins: 5
-        currentIndex: 0
+    background: Rectangle {
+        color: Global.colors.background
+    }
 
-        PairTV {
+    Component {
+        id: _pgPairing
 
+        PgPairing {
+            onFinished: {
+                _stackMain.replace(_pgMain)
+            }
         }
     }
 
-    /* InputPanel {
+    Component {
+        id: _pgMain
+
+        PgMain {
+        }
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+
+        /* Item {
+            Layout.preferredHeight: 150 * Global.sizes.scale
+        } */
+
+        DxcHeader {
+            Layout.fillWidth: true
+            Layout.leftMargin: Global.sizes.defaultMargin
+            Layout.rightMargin: Global.sizes.defaultMargin
+        }
+
+        Item {
+            Layout.preferredHeight: 80 * Global.sizes.scale
+        }
+
+        StackView {
+            id: _stackMain
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            initialItem: _pgPairing
+            // initialItem: _pgMain
+        }
+    }
+
+    InputPanel {
         id: inputPanel
         z: 99
         x: 0
@@ -33,7 +71,7 @@ ApplicationWindow {
             when: inputPanel.active
             PropertyChanges {
                 target: inputPanel
-                y: window.height - inputPanel.height
+                y: window.height - inputPanel.height - inputPanel.height * 2 / 3
             }
         }
         transitions: Transition {
@@ -48,5 +86,5 @@ ApplicationWindow {
                 }
             }
         }
-    } */
+    }
 }

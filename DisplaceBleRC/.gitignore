@@ -1,2 +1,4 @@
+*.qtds
 *.user
-build/
+.DS_Store
+

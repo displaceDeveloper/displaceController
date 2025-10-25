@@ -5,6 +5,8 @@
 #ifndef CHARACTERISTICINFO_H
 #define CHARACTERISTICINFO_H
 
+#include <QtSystemDetection>
+
 #include <QLowEnergyCharacteristic>
 
 #include <QObject>
