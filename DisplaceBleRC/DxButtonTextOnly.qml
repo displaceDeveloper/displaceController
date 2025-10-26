@@ -6,11 +6,13 @@ Rectangle {
     signal clicked()
 
     property alias text: _lbl.text
+    property alias textColor: _lbl.color
     property bool highlight: false
     property real padding: Global.sizes.defaultPadding
+    property alias contentWidth: _lbl.width
 
     color: control.highlight ? "white" : "#1d1d1d"
-    border.width: 1
+    border.width: Global.sizes.defaultBorderWidth
     border.color: "#d9d9d9"
     radius: 40 * Global.sizes.scale
 

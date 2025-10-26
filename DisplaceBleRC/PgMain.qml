@@ -13,7 +13,7 @@ DxcPage {
             id: _flick
 
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: control.height * 0.43
             Layout.leftMargin: Global.sizes.defaultMargin
             Layout.rightMargin: Global.sizes.defaultMargin
 
@@ -27,26 +27,22 @@ DxcPage {
                 width: _flick.width
                 spacing: 80 * Global.sizes.scale
 
-                DxcListPairedTv {
+                DxButtonIconAndText {
                     Layout.fillWidth: true
+                    Layout.preferredHeight: 150 * Global.sizes.scale
+                    source: "images/add.svg"
+                    text: "Pair New TV"
                 }
 
-                DxcPairedRoom {
+                DxcPairedRoomSimplified {
                     Layout.fillWidth: true
-                    // Layout.leftMargin: Global.sizes.defaultMargin
-                    // Layout.rightMargin: Global.sizes.defaultMargin
+                    highlight: true
+                    text: "Living Room"
                 }
 
-                DxcListVideo {
-                    title: "Netflix"
-                }
-
-                DxcListVideo {
-                    title: "Youtube"
-                }
-
-                DxcListVideo {
-                    title: "Disney Plus"
+                DxcPairedRoomSimplified {
+                    Layout.fillWidth: true
+                    text: "Bedroom TV"
                 }
             }
         }

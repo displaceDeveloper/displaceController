@@ -10,16 +10,6 @@ set(BUILD_SHARED_LIBS OFF)
 set(ZXING_EXAMPLES OFF)
 add_subdirectory(zxing-cpp)
 
-set(SRCS)
-set(INC_DIRS)
-
-list(APPEND SRCS
-    characteristicinfo.h    characteristicinfo.cpp
-    deviceinfo.h            deviceinfo.cpp
-    serviceinfo.h           serviceinfo.cpp
-    device.h                device.cpp
-)
-
 qt_standard_project_setup(REQUIRES 6.9)
 
 qt_add_executable(appDisplaceBleRC main.cpp)
@@ -35,7 +25,6 @@ qt_add_qml_module(appDisplaceBleRC
     QML_FILES
         Global.qml
         Main.qml
-        # PagePairTV.qml
         DxLabel.qml
         DxTextField.qml
         DxButton.qml
@@ -60,13 +49,17 @@ qt_add_qml_module(appDisplaceBleRC
         DxcListVideo.qml
         DxcScrollArea.qml
         DxcPairedRoom.qml
+        DxcPairedRoomSimplified.qml
         DxcSysInfo.qml
         TrackPad.qml
         PgPairing.qml
         PgMain.qml
     SOURCES
-        frameprocessor.h frameprocessor.cpp
-        ${SRCS}
+        frameprocessor.h        frameprocessor.cpp
+        characteristicinfo.h    characteristicinfo.cpp
+        deviceinfo.h            deviceinfo.cpp
+        serviceinfo.h           serviceinfo.cpp
+        device.h                device.cpp
     RESOURCES
         images/logo.png
         images/settings.svg
@@ -93,6 +86,9 @@ qt_add_qml_module(appDisplaceBleRC
         images/wifi.svg
         images/sample_video.png
         images/search.svg
+        images/delete.svg
+        images/keyboard_double_arrow_down.svg
+        images/keyboard_double_arrow_up.svg
 )
 
 qt_add_resources(appDisplaceBleRC "qtquickcontrols2"
@@ -107,7 +103,7 @@ set_target_properties(appDisplaceBleRC
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
-        # QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/android
+        QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/android
 )
 
 target_link_libraries(appDisplaceBleRC
@@ -120,14 +116,6 @@ target_link_libraries(appDisplaceBleRC
 )
 
 if(ANDROID)
-    set_property(TARGET appDisplaceBleRC APPEND PROPERTY
-        QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/android
-    )
-
-    target_include_directories(appDisplaceBleRC
-        PRIVATE
-            ${INC_DIRS}
-    )
 endif()
 
 include(GNUInstallDirs)

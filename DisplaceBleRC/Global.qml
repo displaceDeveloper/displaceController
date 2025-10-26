@@ -18,7 +18,7 @@ Item {
     QtObject {
         id: _sizes
 
-        readonly property real scale: 0.25
+        readonly property real scale: 0.3
         // 0.3 - real phone
         // 0.25 - macos
 
@@ -32,6 +32,7 @@ Item {
         readonly property int defaultPadding: 50 * scale
         readonly property int defaultIconSize: 80 * scale
         readonly property int defaultSpacing: 50 * scale
+        readonly property real defaultBorderWidth: 0.5
     }
     property alias sizes: _sizes
 }

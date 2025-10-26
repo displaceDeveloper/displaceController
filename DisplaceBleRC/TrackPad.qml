@@ -149,52 +149,82 @@ Item {
         }
     }
 
-    /* DxButtonIconAndText {
-        anchors.top: parent.top
-        anchors.left: parent.left
-
-        width: contentWidth + padding * 2
-        flat: true
-        source: "images/keyboard.svg"
-        text: "keyboard"
-    }
-
-    DxSwitch {
-        id: _switchScroll
-        anchors.top: parent.top
-        anchors.right: parent.right
-
-        text: "scroll"
-    }
-
-    DxcScrollArea {
-        id: _scrollLeft
-        anchors.left: parent.left
-        anchors.leftMargin: Global.sizes.defaultMargin
-        anchors.verticalCenter: parent.verticalCenter
-        visible: _switchScroll.checked
-    }
-
-    DxcScrollArea {
-        id: _scrollRight
-        anchors.right: parent.right
-        anchors.rightMargin: Global.sizes.defaultMargin
-        anchors.verticalCenter: parent.verticalCenter
-        visible: _switchScroll.checked
-    }
-
-    DxcScrollArea {
-        id: _scrollBottom
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Global.sizes.defaultMargin
-        anchors.horizontalCenter: parent.horizontalCenter
-        horizontalScroll: true
-        visible: _switchScroll.checked
-    } */
-
     DxLabel {
         anchors.centerIn: parent
         text: "Trackpad"
         color: Global.colors.textMid
+    }
+
+    Rectangle {
+        id: _rcBottomItems
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Global.sizes.defaultMargin
+        color: "black"
+        radius: 40 * Global.sizes.scale
+        width: 781 * Global.sizes.scale
+        height: 150 * Global.sizes.scale
+
+        DxLabel {
+            anchors.left: parent.left
+            anchors.leftMargin: Global.sizes.defaultMargin
+            anchors.verticalCenter: parent.verticalCenter
+            text: "<strong>1x</strong> speed"
+            textFormat: DxLabel.RichText
+        }
+
+        DxButtonIconOnly {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/keyboard.svg"
+        }
+
+        Item {
+            id: _rcScroll
+            anchors.right: parent.right
+            anchors.rightMargin: Global.sizes.defaultMargin
+
+            width: _scroll.width
+            height: parent.height
+
+            property bool checked: false
+
+            DxLabel {
+                id: _scroll
+                anchors.centerIn: parent
+                text: "scroll"
+                color: _rcScroll.checked ? "#42B8FD" : "white"
+            }
+
+            TapHandler {
+                gesturePolicy: TapHandler.WithinBounds
+                onTapped: {
+                    _rcScroll.checked = !_rcScroll.checked
+                }
+            }
+        }
+    }
+
+    // Scroll bars
+    DxcScrollArea {
+        anchors.left: parent.left
+        anchors.leftMargin: Global.sizes.defaultMargin
+        anchors.verticalCenter: parent.verticalCenter
+        visible: _rcScroll.checked
+    }
+
+    DxcScrollArea {
+        anchors.right: parent.right
+        anchors.rightMargin: Global.sizes.defaultMargin
+        anchors.verticalCenter: parent.verticalCenter
+        visible: _rcScroll.checked
+    }
+
+    DxcScrollArea {
+        anchors.bottom: _rcBottomItems.top
+        anchors.bottomMargin: Global.sizes.defaultMargin
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalScroll: true
+        visible: _rcScroll.checked
     }
 }

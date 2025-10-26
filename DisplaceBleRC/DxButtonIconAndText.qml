@@ -32,8 +32,8 @@ Rectangle {
         return "#1d1d1d"
     }
 
-    border.width: control.flat ? 0 : 1
-    border.color: "#d9d9d9"
+    border.width: control.flat ? 0 : Global.sizes.defaultBorderWidth
+    border.color: "#808080"
     radius: 40 * Global.sizes.scale
 
     width: Math.max(

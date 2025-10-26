@@ -13,48 +13,66 @@ Item {
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 100 * Global.sizes.scale
-        height: 700 * Global.sizes.scale
-        border.width: 1
-        border.color: "white"
-        color: "transparent"
+        width: 85 * Global.sizes.scale
+        height: 615 * Global.sizes.scale
+        color: "black"
         radius: width / 2
 
         DxIconColored {
             id: _btnUp
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "images/arrow_drop_up.svg"
+            source: "images/keyboard_double_arrow_up.svg"
             sourceSize {
-                width: 100 * Global.sizes.scale
-                height: 100 * Global.sizes.scale
+                width: 80 * Global.sizes.scale
+                height: 80 * Global.sizes.scale
             }
-        }
-
-        Column {
-            anchors.top: _btnUp.bottom
-            spacing: 30 * Global.sizes.scale
-            Repeater {
-                model: Math.max(
-                   Math.round((_btnDown.y - (_btnUp.y + _btnUp.height)) / (30 * Global.sizes.scale)) - 1,
-                   0
-                )
-
-                Rectangle {
-                    height: 1
-                    width: _rc.width
-                }
-            }
+            color: "#3f3a3a"
         }
 
         DxIconColored {
             id: _btnDown
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            source: "images/arrow_drop_down.svg"
+            source: "images/keyboard_double_arrow_down.svg"
             sourceSize {
-                width: 100 * Global.sizes.scale
-                height: 100 * Global.sizes.scale
+                width: 80 * Global.sizes.scale
+                height: 80 * Global.sizes.scale
+            }
+            color: "#3f3a3a"
+        }
+
+        Rectangle {
+            id: _rcDrag
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: (parent.height - height) / 2
+            width: 70 * Global.sizes.scale
+            height: 130 * Global.sizes.scale
+            radius: 40 * Global.sizes.scale
+            color: "#201D1D"
+
+            Behavior on y {
+                NumberAnimation {
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            MouseArea {
+                id: _mouse
+                anchors.fill: parent
+                anchors.margins: -16 * Global.sizes.scale
+
+                drag.target: parent
+                drag.axis: Drag.YAxis
+                drag.minimumY: _btnUp.y + _btnUp.height
+                drag.maximumY: _btnDown.y - height
+            }
+
+            property bool isDragging: _mouse.drag.active
+            onIsDraggingChanged: {
+                if (!isDragging) {
+                    y = (parent.height - height) / 2
+                }
             }
         }
     }
