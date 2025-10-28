@@ -13,7 +13,9 @@ import requests
 # float  dy
 # uint8  btn
 # uint8  down
-PKT_FMT = "<B I f f B B"
+# qint16 dwheel
+# qint16 hwheel
+PKT_FMT = "<B I f f B B h h"
 PKT_SIZE = struct.calcsize(PKT_FMT)  # = 11 bytes
 
 SERVICE_UUID = '12345678-1234-5678-1234-56789abcdef0'
@@ -25,7 +27,7 @@ ALPHA = 1.0 # 0.35
 
 cap = {
     ecodes.EV_KEY: [ecodes.BTN_LEFT],
-    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y, ecodes.REL_WHEEL, ecodes.REL_HWHEEL],
 }
 ui = UInput(cap, name="DisplaceTrackpad", bustype=ecodes.BUS_USB)
 
@@ -48,6 +50,15 @@ def rel_move(dx_norm: float, dy_norm: float):
 
 def left_button(down: bool):
     ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 1 if down else 0)
+    ui.syn()
+
+def scroll(dwheel: int, hwheel: int):
+    print(f"Scrolling: dwheel={dwheel}, hwheel={hwheel}")
+    # Handle horizontal and vertical scrolling
+    if dwheel != 0:
+        ui.write(ecodes.EV_REL, ecodes.REL_WHEEL, 1 if dwheel > 0 else -1)
+    if hwheel != 0:
+        ui.write(ecodes.EV_REL, ecodes.REL_HWHEEL, 1 if hwheel > 0 else -1)
     ui.syn()
 
 
@@ -81,7 +92,7 @@ class App:
             print(f"Invalid packet size: {len(data)}")
             return
 
-        typ, t_ms, dx, dy, btn, down = struct.unpack(PKT_FMT, data)
+        typ, t_ms, dx, dy, btn, down, dwheel, hwheel = struct.unpack(PKT_FMT, data)
 
         # typ = ev.get("type")
         if typ == 1: # "move"
@@ -92,6 +103,8 @@ class App:
             if btn == 0: # "left"
                 # down = bool(ev.get("down", False))
                 left_button(down)
+        elif typ == 3:
+            scroll(dwheel, hwheel)
 
         if cls.tx_char:
             cls.tx_char.set_value(list(data))

@@ -104,6 +104,7 @@ set_target_properties(appDisplaceBleRC
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
         QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/android
+        QT_ANDROID_MIN_SDK_VERSION 27
 )
 
 target_link_libraries(appDisplaceBleRC

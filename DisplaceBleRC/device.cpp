@@ -27,18 +27,29 @@ struct MousePkt {
     float   dy;     // move delta Y (float32)
     quint8  btn;    // 0..4
     quint8  down;   // 0/1
+    qint16  dwheel;
+    qint16  hwheel;
 };
 #pragma pack(pop)
 
 QByteArray encodeMsg(const QVariantMap &m) {
     MousePkt p{};
-    p.type = (m.value("type").toString()=="move") ? 0x01 : 0x02;
+    QString type = m.value("type").toString();
+
+    if (type=="move") {
+        p.type = 0x01;
+    } else if (type=="btn") {
+        p.type = 0x02;
+    } else if (type=="scroll") {
+        p.type = 0x03;
+    }
+
     p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));
 
     if (p.type==0x01) {
         p.dx = float(m.value("dx").toDouble());
         p.dy = float(m.value("dy").toDouble());
-    } else {
+    } else if (p.type==0x02) {
         auto mapBtn = [](const QString &s)->quint8{
             if (s=="left") return 0;
             if (s=="right") return 1;
@@ -49,6 +60,9 @@ QByteArray encodeMsg(const QVariantMap &m) {
         };
         p.btn  = mapBtn(m.value("btn").toString());
         p.down = m.value("down").toBool() ? 1 : 0;
+    } else if (p.type==0x03) {
+        p.dwheel = m.value("dwheel").toInt();
+        p.hwheel = m.value("hwheel").toInt();
     }
 
     return QByteArray(reinterpret_cast<const char*>(&p), sizeof(p));

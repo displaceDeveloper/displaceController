@@ -9,14 +9,14 @@ Control {
     property alias source: _ico.source
     property alias sourceSize: _ico.sourceSize
 
-    background: Item {}
+    background: Item {
+        TapHandler {
+            gesturePolicy: TapHandler.WithinBounds
+            onTapped: control.clicked()
+        }
+    }
 
     contentItem: DxIconColored {
         id: _ico
-    }
-
-    TapHandler {
-        gesturePolicy: TapHandler.WithinBounds
-        onTapped: control.clicked()
     }
 }

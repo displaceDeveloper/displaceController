@@ -6,6 +6,7 @@ Item {
     id: control
 
     signal sendMsg(var obj)
+    signal requestKeyboard(bool show)
 
     Rectangle {
         id: _rc
@@ -174,9 +175,16 @@ Item {
         }
 
         DxButtonIconOnly {
+            property bool checked: false
+
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             source: "images/keyboard.svg"
+
+            onClicked: {
+                checked = !checked
+                control.requestKeyboard(checked)
+            }
         }
 
         Item {
@@ -211,6 +219,15 @@ Item {
         anchors.leftMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
+        onValueChanged: (val) => {
+                            const now = Date.now()/1000.0
+                            control.sendMsg({
+                                t: now,
+                                type: "scroll",
+                                dwheel: val,
+                                hwheel: 0
+                            })
+                        }
     }
 
     DxcScrollArea {
@@ -218,6 +235,15 @@ Item {
         anchors.rightMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
+        onValueChanged: (val) => {
+                            const now = Date.now()/1000.0
+                            control.sendMsg({
+                                t: now,
+                                type: "scroll",
+                                dwheel: val,
+                                hwheel: 0
+                            })
+                        }
     }
 
     DxcScrollArea {
@@ -226,5 +252,14 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalScroll: true
         visible: _rcScroll.checked
+        onValueChanged: (val) => {
+                            const now = Date.now()/1000.0
+                            control.sendMsg({
+                                t: now,
+                                type: "scroll",
+                                dwheel: 0,
+                                hwheel: val
+                            })
+                        }
     }
 }

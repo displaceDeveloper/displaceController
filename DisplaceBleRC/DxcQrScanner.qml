@@ -7,33 +7,15 @@ Item {
 
     signal valueDetected(string tvCode, string pairCode)
 
-    width: rcBorder.width
-    height: rcBorder.height
+    // property alias camera: _camera
+    property alias cameraActive: _camera.active
 
-    CameraPermission {
-        id: permission
-        onStatusChanged: {
-            console.log("onStatusChanged")
-
-            if (permission.status === Qt.PermissionStatus.Denied) {
-                console.log("Camera permission required")
-            } else if (permission.status === Qt.PermissionStatus.Granted) {
-            }
-        }
-
-        Component.onCompleted: {
-            if (permission.status === Qt.PermissionStatus.Undetermined) {
-                permission.request()
-            }
-        }
-    }
+    width: 860 * Global.sizes.scale
+    height: 800 * Global.sizes.scale
 
     Rectangle {
         id: rcBorder
-        anchors.centerIn: parent
-
-        width: 860 * Global.sizes.scale
-        height: 800 * Global.sizes.scale
+        anchors.fill: parent
         radius: 60 * Global.sizes.scale
 
         clip: true
@@ -46,11 +28,12 @@ Item {
                 console.log(videoInputs)
             }
         }
+
         CaptureSession {
             camera: Camera {
-                id: camera
+                id: _camera
                 cameraDevice: mediaDevices.defaultVideoInput
-                active: permission.status === Qt.PermissionStatus.Granted
+                // active: true
             }
             videoOutput: videoOutput
         }
@@ -65,7 +48,7 @@ Item {
             id: frameProcessor
 
             onCodeDetected: (tvCode, pairCode) => {
-                                camera.stop()
+                                _camera.stop()
                                 _tmr.stop()
 
                                 control.valueDetected(tvCode, pairCode)
@@ -74,24 +57,41 @@ Item {
 
         Timer {
             id: _tmr
-            running: camera.active
-            interval: 1000
+            running: _camera.active
+            interval: 1500
             repeat: true
             triggeredOnStart: false
 
             onTriggered: {
-                console.log("Process")
                 videoOutput.grabToImage(function(result) {
                     frameProcessor.processImage(result.image)
                 })
             }
         }
-    }
 
-    /* TapHandler {
-        gesturePolicy: TapHandler.WithinBounds
-        onTapped: {
-            control.valueDetected("ABCDEF")
+        PinchArea {
+            anchors.fill: parent
+
+            property real currentZoomFactor: 1.0
+
+            onPinchStarted: (pinch) => {
+                currentZoomFactor = _camera.zoomFactor
+            }
+
+            onPinchUpdated: (pinch) => {
+                let offset = (pinch.scale - 1.0)
+                if (offset < 0) {
+                    offset *= 2
+                }
+
+                let newZoom = currentZoomFactor + offset
+                newZoom = Math.max(newZoom, _camera.minimumZoomFactor)
+                newZoom = Math.min(newZoom, _camera.maximumZoomFactor)
+
+                _camera.zoomFactor = newZoom
+            }
+
+            onPinchFinished: (pinch) => {}
         }
-    } */
+    }
 }

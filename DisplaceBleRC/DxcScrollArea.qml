@@ -3,6 +3,7 @@ import QtQuick
 Item {
     id: control
 
+    signal valueChanged(int val)
     property bool horizontalScroll: false
 
     width: horizontalScroll ? _rc.height : _rc.width
@@ -57,6 +58,18 @@ Item {
                 }
             }
 
+            Timer {
+                id: _tmr
+
+                running: _mouse.drag.active
+                interval: 100
+                repeat: true
+                triggeredOnStart: true
+                onTriggered: {
+                    control.valueChanged((_rc.height - _rcDrag.height) / 2 - _rcDrag.y)
+                }
+            }
+
             MouseArea {
                 id: _mouse
                 anchors.fill: parent
@@ -72,6 +85,7 @@ Item {
             onIsDraggingChanged: {
                 if (!isDragging) {
                     y = (parent.height - height) / 2
+                    control.valueChanged(0)
                 }
             }
         }

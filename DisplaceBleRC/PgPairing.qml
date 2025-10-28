@@ -30,7 +30,11 @@ DxcPage {
 
     // Page 0: Scan QR code
     component ScanQrCode: Control {
+        property alias cameraActive: _qr.cameraActive
+
         contentItem: ColumnLayout {
+            // property alias cameraActive: _qr.cameraActive
+
             PairingText {
                 Layout.alignment: Qt.AlignHCenter
             }
@@ -42,7 +46,14 @@ DxcPage {
             }
 
             DxcQrScanner {
-                Layout.alignment: Qt.AlignHCenter
+                id: _qr
+
+                Layout.leftMargin: Global.sizes.defaultMargin
+                Layout.rightMargin: Global.sizes.defaultMargin
+                Layout.fillWidth: true
+                Layout.preferredHeight: width
+
+                // camera.active: true
 
                 onValueDetected: (tvCode, pairCode) => {
                     _local.deviceName = tvCode
@@ -74,14 +85,6 @@ DxcPage {
 
             PairingBusyIndicator {
                 Layout.alignment: Qt.AlignHCenter
-
-                // Dummy item to go to successfully
-                /* TapHandler {
-                    gesturePolicy: TapHandler.WithinBounds
-                    onTapped: {
-                        _stack.currentIndex = 3
-                    }
-                } */
             }
 
             DxButtonTextOnly {
@@ -90,16 +93,6 @@ DxcPage {
                 onClicked: _stack.currentIndex = 0
             }
         }
-
-        // Dummy timer to trigger error
-        /* Timer {
-            running: _stack.currentIndex === 1
-            repeat: false
-            interval: 3000
-            onTriggered: {
-                _stack.currentIndex = 2
-            }
-        } */
     }
 
     // Page 2: Pair error
@@ -201,29 +194,9 @@ DxcPage {
         }
     }
 
-    BluetoothPermission {
-        id: permission
-        communicationModes: BluetoothPermission.Access
-        onStatusChanged: {
-            if (permission.status === Qt.PermissionStatus.Denied) {
-                console.log("Bluetooth permission required")
-            } else if (permission.status === Qt.PermissionStatus.Granted) {
-                console.log("Start discovery ...")
-                Device.startDeviceDiscovery()
-            }
-        }
-
-        Component.onCompleted: {
-            if (permission.status === Qt.PermissionStatus.Undetermined) {
-                permission.request()
-            }
-        }
-    }
-
     Connections {
         id: _conn
         target: Device
-        enabled: permission.status === Qt.PermissionStatus.Granted
 
         function onDevicesUpdated() {
             let shouldConnect = false
@@ -284,8 +257,17 @@ DxcPage {
         anchors.verticalCenter: parent.verticalCenter
         height: control.height * 2 / 3
         interactive: false
+        onCurrentIndexChanged: {
+            if (currentIndex === 0) {
+                _scanQr.cameraActive = true
+                _local.deviceName = ""
+            }
+        }
 
         ScanQrCode {
+            id: _scanQr
+
+            Component.onCompleted: cameraActive = true
         }
 
         Pairing {
