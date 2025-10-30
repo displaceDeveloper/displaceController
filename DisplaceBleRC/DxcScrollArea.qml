@@ -57,36 +57,41 @@ Item {
                     easing.type: Easing.OutCubic
                 }
             }
+        }
 
-            Timer {
-                id: _tmr
+        Timer {
+            id: _tmr
 
-                running: _mouse.drag.active
-                interval: 100
-                repeat: true
-                triggeredOnStart: true
-                onTriggered: {
-                    control.valueChanged((_rc.height - _rcDrag.height) / 2 - _rcDrag.y)
-                }
+            running: _mouse.drag.active
+            interval: 70
+            repeat: true
+            triggeredOnStart: true
+            onTriggered: {
+                control.valueChanged((_rc.height - _rcDrag.height) / 2 - _rcDrag.y)
             }
+        }
 
-            MouseArea {
-                id: _mouse
-                anchors.fill: parent
-                anchors.margins: -16 * Global.sizes.scale
+        MouseArea {
+            id: _mouse
+            anchors.fill: parent
+            anchors.margins: -16 * Global.sizes.scale
 
-                drag.target: parent
-                drag.axis: Drag.YAxis
-                drag.minimumY: _btnUp.y + _btnUp.height
-                drag.maximumY: _btnDown.y - height
+            drag.target: _rcDrag
+            drag.axis: Drag.YAxis
+            drag.minimumY: _rcDrag.x
+            drag.maximumY: _rc.height - _rcDrag.height - _rcDrag.x
+
+            onPressed: (mouse) => {
+                let y = Math.min(mouse.y, _rc.height - _rcDrag.height - _rcDrag.x)
+                _rcDrag.y = y
             }
+        }
 
-            property bool isDragging: _mouse.drag.active
-            onIsDraggingChanged: {
-                if (!isDragging) {
-                    y = (parent.height - height) / 2
-                    control.valueChanged(0)
-                }
+        property bool isDragging: _mouse.drag.active
+        onIsDraggingChanged: {
+            if (!isDragging) {
+                _rcDrag.y = (_rc.height - _rcDrag.height) / 2
+                control.valueChanged(0)
             }
         }
     }

@@ -64,8 +64,8 @@ Item {
                 control.sendMsg({
                     t: now,
                     type: "move",
-                    dx: dx * 2, // * _sld.value,
-                    dy: dy * 2 // * _sld.value
+                    dx: dx * 4, // * _sld.value,
+                    dy: dy * 4 // * _sld.value
                 })
 
                 _rc.lastSend = now
@@ -100,6 +100,13 @@ Item {
             width: 150 * Global.sizes.scale
             height: width
             source: "images/search.svg"
+            onClicked: {
+                const now = Date.now()/1000.0
+                control.sendMsg({
+                    t: now,
+                    type: "search"
+                })
+            }
         }
 
         Rectangle {
@@ -118,6 +125,14 @@ Item {
                     width: 100 * Global.sizes.scale
                     height: 100 * Global.sizes.scale
                 }
+
+                onClicked: {
+                    const now = Date.now()/1000.0
+                    control.sendMsg({
+                        t: now,
+                        type: "goback"
+                    })
+                }
             }
 
             DxButtonIconOnly {
@@ -127,6 +142,13 @@ Item {
                 sourceSize {
                     width: 100 * Global.sizes.scale
                     height: 100 * Global.sizes.scale
+                }
+                onClicked: {
+                    const now = Date.now()/1000.0
+                    control.sendMsg({
+                        t: now,
+                        type: "home"
+                    })
                 }
             }
 
@@ -138,6 +160,13 @@ Item {
                 sourceSize {
                     width: 100 * Global.sizes.scale
                     height: 100 * Global.sizes.scale
+                }
+                onClicked: {
+                    const now = Date.now()/1000.0
+                    control.sendMsg({
+                        t: now,
+                        type: "play_pause"
+                    })
                 }
             }
         }

@@ -42,6 +42,14 @@ QByteArray encodeMsg(const QVariantMap &m) {
         p.type = 0x02;
     } else if (type=="scroll") {
         p.type = 0x03;
+    } else if (type=="home") {
+        p.type = 0x04;
+    } else if (type=="goback") {
+        p.type = 0x05;
+    } else if (type=="search") {
+        p.type = 0x06;
+    } else if (type=="play_pause") {
+        p.type = 0x07;
     }
 
     p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));

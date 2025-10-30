@@ -18,9 +18,6 @@ DxcPage {
             Layout.preferredHeight: preferredHeight
             Layout.leftMargin: Global.sizes.defaultMargin
             Layout.rightMargin: Global.sizes.defaultMargin
-            /* color: "transparent"
-            border.width: 1
-            border.color: "red" */
 
             Flickable {
                 id: _flick
@@ -49,13 +46,18 @@ DxcPage {
                         id: _currentRoom
                         Layout.fillWidth: true
                         highlight: true
-                        text: "Living Room"
+                        compact: control.state === "Keyboard"
+                        text: Global.settings.deviceName
                     }
 
-                    DxcPairedRoomSimplified {
-                        Layout.fillWidth: true
-                        text: "Bedroom TV"
-                    }
+                    /* Repeater {
+                        model: 3
+
+                        DxcPairedRoomSimplified {
+                            Layout.fillWidth: true
+                            text: "Bedroom TV"
+                        }
+                    } */
                 }
             }
 

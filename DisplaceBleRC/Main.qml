@@ -44,6 +44,22 @@ ApplicationWindow {
     }
 
     Component {
+        id: _pgDebug
+
+        Item {
+            Component.onCompleted: {
+                let tvs = Global.db.getAllTvs()
+                _txtLogs.text = JSON.stringify(tvs, null, 2)
+            }
+
+            TextArea {
+                id: _txtLogs
+                anchors.fill: parent
+            }
+        }
+    }
+
+    Component {
         id: _main
 
         ColumnLayout {
@@ -67,6 +83,7 @@ ApplicationWindow {
 
                 initialItem: _pgPairing
                 // initialItem: _pgMain
+                // initialItem: _pgDebug
 
                 Component.onCompleted: {
                     _local._replaceStack = function(comp) {

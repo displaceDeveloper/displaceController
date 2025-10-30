@@ -57,6 +57,7 @@ DxcPage {
 
                 onValueDetected: (tvCode, pairCode) => {
                     _local.deviceName = tvCode
+                    _local.pairingCode = pairCode
                     _local.connectToDevice()
 
                     _stack.currentIndex = 1
@@ -126,6 +127,10 @@ DxcPage {
 
     // Page 3: Successfully Paired
     component SuccessfullyPaired: Control {
+        Component.onCompleted: {
+            _txtName.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "black"
         }
@@ -163,6 +168,18 @@ DxcPage {
                 highlight: true
 
                 onClicked: {
+                    Global.settings.deviceName = _txtName.text
+                    Global.settings.deviceAddress = _local.deviceAddress
+                    Global.settings.tvCode = _local.deviceName
+                    Global.settings.pairingCode = _local.pairingCode
+
+                    Global.db.insertTv(
+                        _txtName.text,
+                        _local.deviceAddress,
+                        _local.deviceName,
+                        _local.pairingCode
+                    )
+
                     control.finished()
                 }
             }
@@ -178,7 +195,13 @@ DxcPage {
 
         property bool readyForUse: false
         property bool isConnected: false
+        property bool enableAutoConnect: true
+        property bool isJustAutoConnected: false
+
         property string deviceName: ""
+        property string deviceAddress: ""
+        property string pairingCode: ""
+        property string deviceFriendlyName: ""
 
         function connectToDevice() {
             _local.isConnected = false
@@ -187,6 +210,7 @@ DxcPage {
                 if (dev.deviceName === _local.deviceName) {
                     _local.isConnected = true
 
+                    _local.deviceAddress = dev.deviceAddress
                     Device.scanServices(dev.deviceAddress)
                     break
                 }
@@ -201,8 +225,6 @@ DxcPage {
         function onDevicesUpdated() {
             let shouldConnect = false
 
-            console.log("onDevicesUpdated()")
-
             for (let dev of Device.devicesList) {
                 if (
                     _local.deviceName.length > 0 &&
@@ -215,6 +237,35 @@ DxcPage {
 
             if (shouldConnect) {
                 _local.connectToDevice()
+            } else {
+                if (_local.enableAutoConnect) {
+                    let tvs = Global.db.getAllTvs()
+                    let connected = new Set()
+                    let autoConnTvCode = ""
+                    let autoConnAddress = ""
+                    let autoConnName = ""
+                    let nameByAddress = {}
+
+                    for (let tv of tvs) {
+                        connected.add(tv.address)
+                        nameByAddress[tv.address] = tv.name
+                    }
+
+                    for (let d of Device.devicesList) {
+                        if (connected.has(d.deviceAddress)) {
+                            autoConnAddress = d.deviceAddress
+                            autoConnTvCode = d.deviceName
+                            autoConnName = nameByAddress[d.deviceAddress]
+                        }
+                    }
+
+                    if (autoConnTvCode) {
+                        _local.isJustAutoConnected = true
+                        _local.deviceFriendlyName = autoConnName
+                        _local.deviceName = autoConnTvCode
+                        _local.connectToDevice()
+                    }
+                }
             }
         }
 
@@ -237,7 +288,17 @@ DxcPage {
                 if (characteristic.characteristicUuid === "12345678-1234-5678-1234-56789abcdef1") {
                     _local.readyForUse = true
                     console.log("Bluetooth CONNECTED")
-                    _stack.currentIndex = 3
+
+                    if (_local.isJustAutoConnected) {
+                        Global.settings.deviceName = _local.deviceFriendlyName
+                        Global.settings.deviceAddress = _local.deviceAddress
+                        Global.settings.tvCode = _local.deviceName
+                        Global.settings.pairingCode = _local.pairingCode
+
+                        control.finished()
+                    } else {
+                        _stack.currentIndex = 3
+                    }
                     break
                 }
             }

@@ -6,10 +6,12 @@ import QtQuick.Effects
 Item {
     id: control
 
+    property bool compact: false
     property bool highlight: false
     property alias text: _txtName.text
 
-    implicitHeight: 335 * Global.sizes.scale
+    // implicitHeight: (control.compact ? 170 : 335) * Global.sizes.scale
+    height: (control.compact ? 200 : 335) * Global.sizes.scale
 
     Rectangle {
         id: rcBg
@@ -58,7 +60,7 @@ Item {
                 height: 120 * Global.sizes.scale
             }
 
-            text: control.highlight ? "TV POWER" : "REMOVE"
+            text: control.compact ? "" : (control.highlight ? "TV POWER" : "REMOVE")
             font.pixelSize: 20 * Global.sizes.scale
 
             color: "white"
@@ -103,9 +105,11 @@ Item {
 
                 Item {
                     Layout.fillHeight: true
+                    visible: !control.compact
                 }
 
                 RowLayout {
+                    visible: !control.compact
                     spacing: Global.sizes.defaultSpacing
 
                     DxButtonTextOnly {

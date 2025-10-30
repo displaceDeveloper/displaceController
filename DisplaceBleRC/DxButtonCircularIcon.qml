@@ -3,6 +3,8 @@ import QtQuick
 Rectangle {
     id: control
 
+    signal clicked()
+
     width: 150 * Global.sizes.scale
     height: width
     radius: width / 2
@@ -16,5 +18,10 @@ Rectangle {
         anchors.centerIn: parent
 
         source: "images/search.svg"
+    }
+
+    TapHandler {
+        gesturePolicy: TapHandler.WithinBounds
+        onTapped: control.clicked()
     }
 }

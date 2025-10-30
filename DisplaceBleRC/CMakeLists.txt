@@ -4,7 +4,7 @@ project(DisplaceBleRC VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Sql)
 
 set(BUILD_SHARED_LIBS OFF)
 set(ZXING_EXAMPLES OFF)
@@ -113,6 +113,7 @@ target_link_libraries(appDisplaceBleRC
         Qt6::Quick
         Qt6::Multimedia
         Qt6::Bluetooth
+        Qt6::Sql
         ZXing
 )
 
