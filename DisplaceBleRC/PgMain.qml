@@ -7,7 +7,7 @@ DxcPage {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 80 * Global.sizes.scale
+        spacing: Global.sizes.defaultSpacing
 
         Item {
             id: _top
@@ -18,6 +18,27 @@ DxcPage {
             Layout.preferredHeight: preferredHeight
             Layout.leftMargin: Global.sizes.defaultMargin
             Layout.rightMargin: Global.sizes.defaultMargin
+
+            Component.onCompleted: {
+                let tvs = Global.db.getAllTvs()
+                for (let tv of tvs) {
+                    if (tv.address === Global.settings.deviceAddress) {
+                        continue
+                    }
+
+                    _lstTv.append({
+                        tvId: tv.id,
+                        tvName: tv.name,
+                        tvAddress: tv.address,
+                        tvCode: tv.tv_code,
+                        tvPairingCode: tv.pairing_code
+                    })
+                }
+            }
+
+            ListModel {
+                id: _lstTv
+            }
 
             Flickable {
                 id: _flick
@@ -33,10 +54,10 @@ DxcPage {
                     id: _content
 
                     width: _flick.width
-                    spacing: 80 * Global.sizes.scale
+                    spacing: Global.sizes.defaultSpacing
 
                     DxButtonIconAndText {
-                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
                         Layout.preferredHeight: 150 * Global.sizes.scale
                         source: "images/add.svg"
                         text: "Pair New TV"
@@ -46,18 +67,45 @@ DxcPage {
                         id: _currentRoom
                         Layout.fillWidth: true
                         highlight: true
-                        compact: control.state === "Keyboard"
-                        text: Global.settings.deviceName
+                        text: Global.settings.deviceName || "No name"
+                        tvDbId: ""
+
+                        onPowerOffRequested: {
+                            console.log("Power Off Request")
+
+                            const now = Date.now()/1000.0
+                            control.sendMsg({
+                                t: now,
+                                type: "poweroff"
+                            })
+                        }
+
+                        onPowerOnRequested: {
+                            console.log("Power On Request")
+
+                            const now = Date.now() / 1000.0
+                            control.sendMsg({
+                                t: now,
+                                type: "poweron"
+                            })
+                        }
                     }
 
-                    /* Repeater {
-                        model: 3
+                    Repeater {
+                        model: _lstTv
 
                         DxcPairedRoomSimplified {
                             Layout.fillWidth: true
-                            text: "Bedroom TV"
+                            text: tvName
+                            compact: true
+                            highlight: false
+                            tvDbId: tvId
+
+                            onRemoveClicked: {
+                                _lstTv.remove(index)
+                            }
                         }
-                    } */
+                    }
                 }
             }
 
@@ -69,6 +117,37 @@ DxcPage {
                 anchors.bottom: parent.bottom
 
                 visible: false
+
+                RowLayout {
+                    id: _rowTitle
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    DxIconColored {
+                        source: "images/tv.svg"
+                        sourceSize {
+                            width: 100 * Global.sizes.scale
+                            height: 100 * Global.sizes.scale
+                        }
+                    }
+
+                    DxLabel {
+                        text: Global.settings.deviceName
+                        font.pixelSize: 55 * Global.sizes.scale
+                    }
+                }
+
+                DxButtonTextOnly {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: _rowTitle.verticalCenter
+                    text: "DONE"
+                    color: "transparent"
+                    border.width: 0
+                    width: contentWidth
+                    textColor: "#269AE2"
+                    textFont.pixelSize: 55 * Global.sizes.scale
+
+                    onClicked: control.state = ""
+                }
 
                 DxTextField {
                     id: _typing
@@ -92,12 +171,14 @@ DxcPage {
         }
 
         TrackPad {
+            id: _trackpad
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             onSendMsg: (obj) => {
-                           Device.writeData("12345678-1234-5678-1234-56789abcdef0", "12345678-1234-5678-1234-56789abcdef1", obj)
-                       }
+                control.sendMsg(obj)
+            }
 
             onRequestKeyboard: (show) => {
                 if (show) {
@@ -109,6 +190,12 @@ DxcPage {
         }
     }
 
+    onStateChanged: {
+        if (state !== "Keyboard") {
+            _trackpad.showKeyBoard = false
+        }
+    }
+
     states: [
         State {
             name: "Keyboard"
@@ -116,40 +203,22 @@ DxcPage {
             PropertyChanges {
                 target:  _keyboardMode
                 visible: true
-                // height: _currentRoom.height + _typing.height + Global.sizes.defaultSpacing
             }
 
             PropertyChanges {
                 target: _top
-                preferredHeight: _currentRoom.height + _typing.height + Global.sizes.defaultSpacing
-            }
-
-            ParentChange {
-                target: _currentRoom
-                parent: _keyboardMode
-            }
-
-            /* AnchorChanges {
-                target:_keyboardMode
-                anchors.bottom: undefined
-            } */
-
-            AnchorChanges {
-                target: _currentRoom
-                anchors.left: _keyboardMode.left
-                anchors.top: _keyboardMode.top
-                anchors.right: _keyboardMode.right
-            }
-
-            AnchorChanges {
-                target: _typing
-                anchors.bottom: undefined
-                anchors.top: _currentRoom.bottom
+                preferredHeight: _rowTitle.height + _typing.height + Global.sizes.defaultSpacing
             }
 
             PropertyChanges {
                 target: _flick
-                opacity: 0
+                visible: false
+
+            }
+
+            PropertyChanges {
+                target: Global.app
+                showHeader: false
             }
         }
     ]
@@ -172,11 +241,15 @@ DxcPage {
                         if (control.state === "Keyboard") {
                             _typing.forceActiveFocus()
                         } else {
-                            control.forceActiveFocus()
+                            // control.forceActiveFocus()
                         }
                     }
                 }
             }
         }
     ]
+
+    function sendMsg(obj) {
+        Device.writeData("12345678-1234-5678-1234-56789abcdef0", "12345678-1234-5678-1234-56789abcdef1", obj)
+    }
 }

@@ -51,9 +51,12 @@ qt_add_qml_module(appDisplaceBleRC
         DxcPairedRoom.qml
         DxcPairedRoomSimplified.qml
         DxcSysInfo.qml
+        DxcSlideCtrl.qml
+        DxcPairButton.qml
         TrackPad.qml
         PgPairing.qml
         PgMain.qml
+        PgListTv.qml
     SOURCES
         frameprocessor.h        frameprocessor.cpp
         characteristicinfo.h    characteristicinfo.cpp
@@ -89,6 +92,11 @@ qt_add_qml_module(appDisplaceBleRC
         images/delete.svg
         images/keyboard_double_arrow_down.svg
         images/keyboard_double_arrow_up.svg
+        images/edit_square.svg
+        images/close.svg
+        images/keyboard_double_arrow_left.svg
+        images/keyboard_double_arrow_right.svg
+        images/pan_tool_alt.svg
 )
 
 qt_add_resources(appDisplaceBleRC "qtquickcontrols2"

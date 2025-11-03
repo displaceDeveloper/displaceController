@@ -50,6 +50,10 @@ QByteArray encodeMsg(const QVariantMap &m) {
         p.type = 0x06;
     } else if (type=="play_pause") {
         p.type = 0x07;
+    } else if (type=="poweron") {
+        p.type = 0x08;
+    } else if (type=="poweroff") {
+        p.type = 0x09;
     }
 
     p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));

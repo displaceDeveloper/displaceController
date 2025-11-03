@@ -7,6 +7,7 @@ Rectangle {
 
     property alias text: _lbl.text
     property alias textColor: _lbl.color
+    property alias textFont: _lbl.font
     property bool highlight: false
     property real padding: Global.sizes.defaultPadding
     property alias contentWidth: _lbl.width

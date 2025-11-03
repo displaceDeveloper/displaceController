@@ -2,7 +2,7 @@ import QtCore
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.VirtualKeyboard
+// import QtQuick.VirtualKeyboard
 
 ApplicationWindow {
     id: window
@@ -10,20 +10,10 @@ ApplicationWindow {
     height: Global.sizes.height
     visible: true
     title: qsTr("Remote Control")
+    // visibility: Window.FullScreen
 
     background: Rectangle {
         color: Global.colors.background
-    }
-
-    QtObject {
-        id: _local
-
-        property var _replaceStack: null
-        function replaceStack(comp) {
-            if (_replaceStack) {
-                _replaceStack(comp)
-            }
-        }
     }
 
     Component {
@@ -31,7 +21,7 @@ ApplicationWindow {
 
         PgPairing {
             onFinished: {
-                _local.replaceStack(_pgMain)
+                Global.appData.replaceStack(_pgMain)
             }
         }
     }
@@ -40,6 +30,16 @@ ApplicationWindow {
         id: _pgMain
 
         PgMain {
+        }
+    }
+
+    Component {
+        id: _pgListTv
+
+        PgListTv {
+            onOpenMainView: {
+                Global.appData.replaceStack(_pgMain)
+            }
         }
     }
 
@@ -60,6 +60,90 @@ ApplicationWindow {
     }
 
     Component {
+        id: _pairingState
+
+        Control {
+            component PairingText: RowLayout {
+                DxIconColored {
+                    source: "images/tv.svg"
+                }
+
+                DxLabel {
+                    text: "Pair this controller with Displace TV"
+                }
+            }
+
+            component PairingBusyIndicator: ColumnLayout {
+                DxBusyIndicator {
+                    Layout.alignment: Qt.AlignHCenter
+                }
+                DxLabel {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Paring ..."
+                }
+            }
+
+            background: Rectangle {
+                color: "black"
+            }
+
+            contentItem: ColumnLayout {
+                PairingText {
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                PairingBusyIndicator {
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                DxButtonTextOnly {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Cancel"
+                    onClicked: _stack.currentIndex = 0
+                }
+            }
+        }
+    }
+
+    Component {
+        id: _pgInit
+
+        Item {
+            Timer {
+                interval: 100
+                repeat: false
+                running: true
+                triggeredOnStart: false
+                onTriggered: {
+                    let count = Global.db.getTvCount()
+                    console.log("COUNT:" + count)
+
+                    if (count > 0) {
+                        console.log("Use tv list page")
+                        Global.appData.replaceStack(_pgListTv)
+                        return
+                    }
+
+                    console.log("Use pairing page")
+                    Global.appData.replaceStack(_pgPairing)
+                }
+            }
+        }
+    }
+
+    Connections {
+        target: Global.appData
+
+        function onIsConnectedChanged() {
+            console.log("onIsConnectedChanged get called")
+
+            if (Global.appData.isJustAutoConnected) {
+                Global.appData.replaceStack(_pgMain)
+            }
+        }
+    }
+
+    Component {
         id: _main
 
         ColumnLayout {
@@ -70,6 +154,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.leftMargin: Global.sizes.defaultMargin
                 Layout.rightMargin: Global.sizes.defaultMargin
+                visible: Global.app.showHeader
             }
 
             Item {
@@ -81,18 +166,20 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                initialItem: _pgPairing
+                initialItem: _pgInit
+
                 // initialItem: _pgMain
+                // initialItem: _pgListTv
                 // initialItem: _pgDebug
 
                 Component.onCompleted: {
-                    _local._replaceStack = function(comp) {
+                    Global.appData._replaceStack = function(comp) {
                         _stackMain.replace(comp)
                     }
                 }
             }
 
-            Item {
+            /* Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: inputPanel.active ? inputPanel.height : 0
 
@@ -101,7 +188,7 @@ ApplicationWindow {
                     width: parent.width
                     visible: active
                 }
-            }
+            } */
         }
     }
 

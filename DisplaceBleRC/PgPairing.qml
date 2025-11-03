@@ -56,9 +56,9 @@ DxcPage {
                 // camera.active: true
 
                 onValueDetected: (tvCode, pairCode) => {
-                    _local.deviceName = tvCode
-                    _local.pairingCode = pairCode
-                    _local.connectToDevice()
+                    Global.appData.deviceName = tvCode
+                    Global.appData.pairingCode = pairCode
+                    Global.appData.connectToDevice()
 
                     _stack.currentIndex = 1
                 }
@@ -136,6 +136,8 @@ DxcPage {
         }
 
         contentItem: ColumnLayout {
+            spacing: Global.sizes.defaultSpacing * 2
+
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
 
@@ -166,18 +168,20 @@ DxcPage {
                 visible: _txtName.text.length > 0
                 text: "Done"
                 highlight: true
+                padding: 20 * Global.sizes.scale
+                width: contentWidth + padding * 4
 
                 onClicked: {
                     Global.settings.deviceName = _txtName.text
-                    Global.settings.deviceAddress = _local.deviceAddress
-                    Global.settings.tvCode = _local.deviceName
-                    Global.settings.pairingCode = _local.pairingCode
+                    Global.settings.deviceAddress = Global.appData.deviceAddress
+                    Global.settings.tvCode = Global.appData.deviceName
+                    Global.settings.pairingCode = Global.appData.pairingCode
 
                     Global.db.insertTv(
                         _txtName.text,
-                        _local.deviceAddress,
-                        _local.deviceName,
-                        _local.pairingCode
+                        Global.appData.deviceAddress,
+                        Global.appData.deviceName,
+                        Global.appData.pairingCode
                     )
 
                     control.finished()
@@ -190,126 +194,6 @@ DxcPage {
         }
     }
 
-    QtObject {
-        id: _local
-
-        property bool readyForUse: false
-        property bool isConnected: false
-        property bool enableAutoConnect: true
-        property bool isJustAutoConnected: false
-
-        property string deviceName: ""
-        property string deviceAddress: ""
-        property string pairingCode: ""
-        property string deviceFriendlyName: ""
-
-        function connectToDevice() {
-            _local.isConnected = false
-
-            for (let dev of Device.devicesList) {
-                if (dev.deviceName === _local.deviceName) {
-                    _local.isConnected = true
-
-                    _local.deviceAddress = dev.deviceAddress
-                    Device.scanServices(dev.deviceAddress)
-                    break
-                }
-            }
-        }
-    }
-
-    Connections {
-        id: _conn
-        target: Device
-
-        function onDevicesUpdated() {
-            let shouldConnect = false
-
-            for (let dev of Device.devicesList) {
-                if (
-                    _local.deviceName.length > 0 &&
-                    _local.isConnected === false &&
-                    (dev.deviceName === _local.deviceName)
-                ) {
-                    shouldConnect = true
-                }
-            }
-
-            if (shouldConnect) {
-                _local.connectToDevice()
-            } else {
-                if (_local.enableAutoConnect) {
-                    let tvs = Global.db.getAllTvs()
-                    let connected = new Set()
-                    let autoConnTvCode = ""
-                    let autoConnAddress = ""
-                    let autoConnName = ""
-                    let nameByAddress = {}
-
-                    for (let tv of tvs) {
-                        connected.add(tv.address)
-                        nameByAddress[tv.address] = tv.name
-                    }
-
-                    for (let d of Device.devicesList) {
-                        if (connected.has(d.deviceAddress)) {
-                            autoConnAddress = d.deviceAddress
-                            autoConnTvCode = d.deviceName
-                            autoConnName = nameByAddress[d.deviceAddress]
-                        }
-                    }
-
-                    if (autoConnTvCode) {
-                        _local.isJustAutoConnected = true
-                        _local.deviceFriendlyName = autoConnName
-                        _local.deviceName = autoConnTvCode
-                        _local.connectToDevice()
-                    }
-                }
-            }
-        }
-
-        function onServicesUpdated() {
-            console.log("onServicesUpdated()")
-
-            for (let serv of Device.servicesList) {
-                if (serv.serviceUuid === "12345678-1234-5678-1234-56789abcdef0") {
-                    console.log("Connect to service")
-                    Device.connectToService(serv.serviceUuid)
-                    break
-                }
-            }
-        }
-
-        function onCharacteristicsUpdated() {
-            console.log("onCharacteristicsUpdated")
-
-            for (let characteristic of Device.characteristicList) {
-                if (characteristic.characteristicUuid === "12345678-1234-5678-1234-56789abcdef1") {
-                    _local.readyForUse = true
-                    console.log("Bluetooth CONNECTED")
-
-                    if (_local.isJustAutoConnected) {
-                        Global.settings.deviceName = _local.deviceFriendlyName
-                        Global.settings.deviceAddress = _local.deviceAddress
-                        Global.settings.tvCode = _local.deviceName
-                        Global.settings.pairingCode = _local.pairingCode
-
-                        control.finished()
-                    } else {
-                        _stack.currentIndex = 3
-                    }
-                    break
-                }
-            }
-        }
-
-        function onDisconnected() {
-            _local.readyForUse = false
-            _local.isConnected = false
-            _swipe.currentIndex = 1
-        }
-    }
 
     SwipeView {
         id: _stack
@@ -321,7 +205,7 @@ DxcPage {
         onCurrentIndexChanged: {
             if (currentIndex === 0) {
                 _scanQr.cameraActive = true
-                _local.deviceName = ""
+                Global.appData.deviceName = ""
             }
         }
 
@@ -338,6 +222,13 @@ DxcPage {
         }
 
         SuccessfullyPaired {
+        }
+    }
+
+    Component.onCompleted: {
+        let obj = _stack
+        Global.appData.connOk = function() {
+            obj.currentIndex = 3
         }
     }
 }

@@ -8,6 +8,8 @@ Item {
     signal sendMsg(var obj)
     signal requestKeyboard(bool show)
 
+    property alias showKeyBoard: _chkKeyboard.checked
+
     Rectangle {
         id: _rc
         anchors.fill: parent
@@ -43,11 +45,13 @@ Item {
                 }
 
                 _rc.hasDrag = false
+                _rc.lastSend = Date.now()/1000.0
             }
 
             onUpdated: (points) => {
                 if (points.length === 0 || !_rc.hasPrev)
                     return
+
                 const now = Date.now()/1000.0
                 // Throttle gửi
                 if (now - _rc.lastSend < 1.0/_rc.sendHz)
@@ -64,8 +68,8 @@ Item {
                 control.sendMsg({
                     t: now,
                     type: "move",
-                    dx: dx * 4, // * _sld.value,
-                    dy: dy * 4 // * _sld.value
+                    dx: dx * 3, // * _sld.value,
+                    dy: dy * 3 // * _sld.value
                 })
 
                 _rc.lastSend = now
@@ -93,11 +97,11 @@ Item {
         anchors.leftMargin: Global.sizes.defaultMargin
         anchors.rightMargin: Global.sizes.defaultMargin
 
-        height: 150 * Global.sizes.scale
+        height: 175 * Global.sizes.scale
 
         DxButtonCircularIcon {
             anchors.left: parent.left
-            width: 150 * Global.sizes.scale
+            width: 175 * Global.sizes.scale
             height: width
             source: "images/search.svg"
             onClicked: {
@@ -113,8 +117,8 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             color: "black"
             radius: 40 * Global.sizes.scale
-            width: 781 * Global.sizes.scale
-            height: 150 * Global.sizes.scale
+            width: 720 * Global.sizes.scale
+            height: 175 * Global.sizes.scale
 
             DxButtonIconOnly {
                 anchors.verticalCenter: parent.verticalCenter
@@ -122,8 +126,8 @@ Item {
                 anchors.leftMargin: Global.sizes.defaultMargin
                 source: "images/arrow_back.svg"
                 sourceSize {
-                    width: 100 * Global.sizes.scale
-                    height: 100 * Global.sizes.scale
+                    width: 125 * Global.sizes.scale
+                    height: 125 * Global.sizes.scale
                 }
 
                 onClicked: {
@@ -140,8 +144,8 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: "images/home.svg"
                 sourceSize {
-                    width: 100 * Global.sizes.scale
-                    height: 100 * Global.sizes.scale
+                    width: 125 * Global.sizes.scale
+                    height: 125 * Global.sizes.scale
                 }
                 onClicked: {
                     const now = Date.now()/1000.0
@@ -158,8 +162,8 @@ Item {
                 anchors.rightMargin: Global.sizes.defaultMargin
                 source: "images/play_pause.svg"
                 sourceSize {
-                    width: 100 * Global.sizes.scale
-                    height: 100 * Global.sizes.scale
+                    width: 125 * Global.sizes.scale
+                    height: 125 * Global.sizes.scale
                 }
                 onClicked: {
                     const now = Date.now()/1000.0
@@ -173,7 +177,7 @@ Item {
 
         DxButtonCircularIcon {
             anchors.right: parent.right
-            width: 150 * Global.sizes.scale
+            width: 175 * Global.sizes.scale
             height: width
             source: "images/volume_up.svg"
         }
@@ -183,6 +187,46 @@ Item {
         anchors.centerIn: parent
         text: "Trackpad"
         color: Global.colors.textMid
+    }
+
+    Rectangle {
+        id: _speedUpdater
+
+        anchors.bottomMargin: Global.sizes.defaultMargin
+        anchors.bottom: _rcBottomItems.top
+        anchors.horizontalCenter: _rcBottomItems.horizontalCenter
+
+        width: 450 * Global.sizes.scale
+        height: 85 * Global.sizes.scale
+        radius: 40 * Global.sizes.scale
+        color: "#000000"
+        visible: _btnSpeed.checked
+
+        RowLayout {
+            anchors.fill: parent
+
+            DxButtonTextOnly {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                text: "-"
+                color: "transparent"
+                border.width: 0
+            }
+
+            DxLabel {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                text: "1x"
+            }
+
+            DxButtonTextOnly {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                text: "+"
+                color: "transparent"
+                border.width: 0
+            }
+        }
     }
 
     Rectangle {
@@ -196,19 +240,30 @@ Item {
         height: 150 * Global.sizes.scale
 
         DxLabel {
+            id: _btnSpeed
+            property bool checked: false
+
             anchors.left: parent.left
             anchors.leftMargin: Global.sizes.defaultMargin
             anchors.verticalCenter: parent.verticalCenter
             text: "<strong>1x</strong> speed"
             textFormat: DxLabel.RichText
+
+            TapHandler {
+                gesturePolicy: TapHandler.WithinBounds
+                onTapped: _btnSpeed.checked = !_btnSpeed.checked
+            }
         }
 
         DxButtonIconOnly {
+            id: _chkKeyboard
+
             property bool checked: false
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             source: "images/keyboard.svg"
+            color: checked ? "#65b6f7" : "white"
 
             onClicked: {
                 checked = !checked
