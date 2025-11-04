@@ -5,6 +5,265 @@ import QtQuick.Layouts
 DxcPage {
     id: control
 
+    Component.onCompleted: {
+        control.refreshTvList()
+
+        if (Global.appData.isConnected) {
+            _drawer.open()
+        }
+    }
+
+    function refreshTvList() {
+        let tvs = Global.db.getAllTvs()
+        console.log(`Tv count: ${ tvs.length }`)
+
+        _lstTv.clear()
+
+        for (let tv of tvs) {
+            if (Global.appData.isConnected && tv.address === Global.settings.deviceAddress) {
+                continue
+            }
+
+            _lstTv.append({
+                tvId: tv.id,
+                tvName: tv.name,
+                tvAddress: tv.address,
+                tvCode: tv.tv_code,
+                tvPairingCode: tv.pairing_code
+            })
+        }
+    }
+
+    Connections {
+        target: Global.appData
+
+        function onIsConnectedChanged() {
+            control.refreshTvList()
+
+            if (Global.appData.isConnected) {
+                _drawer.open()
+            }
+        }
+    }
+
+    ListModel {
+        id: _lstTv
+    }
+
+    Drawer {
+        id: _drawer
+        width: 1077 * Global.sizes.scale
+        height: window.height
+        edge: Qt.LeftEdge
+        interactive: Global.appData.isConnected
+
+        background: Rectangle {
+            color: "#201D1D"
+            topRightRadius: 120 * Global.sizes.scale
+            bottomRightRadius: 120 * Global.sizes.scale
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: Global.sizes.defaultMargin
+
+            DxLabel {
+                text: "Controller"
+                font.pixelSize: 60 * Global.sizes.scale
+            }
+
+            DxPane {
+                Layout.fillWidth: true
+
+                background: Rectangle {
+                    color: "black"
+                    radius: 40 * Global.sizes.scale
+                    border.width: 0.5
+                    border.color: "#464646"
+                }
+
+                ColumnLayout {
+                    width: parent.width
+
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+
+                            DxLabel {
+                                text: "CONTROLLER NAME"
+                                font.pixelSize: 30 * Global.sizes.scale
+                            }
+
+                            DxLabel {
+                                Layout.fillWidth: true
+                                text: "My Controller"
+                                font.pixelSize: 55 * Global.sizes.scale
+                            }
+                        }
+
+                        DxButtonIconAndTextBellow {
+                            source: "images/edit_square.svg"
+                            sourceSize {
+                                width: 60 * Global.sizes.scale
+                                height: 60 * Global.sizes.scale
+                            }
+
+                            text: "RENAME"
+                            font.pixelSize: 30 * Global.sizes.scale
+                        }
+                    }
+
+                    DxHr {
+                        Layout.fillWidth: true
+                    }
+
+                    DxLabel {
+                        text: "SCREEN BRIGHTNESS"
+                        font.pixelSize: 30 * Global.sizes.scale
+                    }
+
+                    DxSlider {
+                        Layout.fillWidth: true
+                    }
+
+                    DxHr {
+                        Layout.fillWidth: true
+                    }
+
+                    DxLabel {
+                        text: "Version"
+                        font.pixelSize: 30 * Global.sizes.scale
+                    }
+
+                    DxLabel {
+                        text: "0.0.18"
+                    }
+                }
+            }
+
+            DxLabel {
+                text: "My TVs"
+                font.pixelSize: 60 * Global.sizes.scale
+            }
+
+            Flickable {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                clip: true
+                contentWidth: width
+                contentHeight: _content.height
+                flickableDirection: Flickable.VerticalFlick
+
+                ColumnLayout {
+                    id: _content
+                    width: parent.width
+                    spacing: Global.sizes.defaultSpacing
+
+                    DxcPairedRoom {
+                        Layout.fillWidth: true
+                        highlight: true
+                        visible: Global.appData.isConnected
+                        text: Global.settings.deviceName
+
+                        onUnpairRequested: {
+                            Device.disconnectFromDevice()
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+
+                        color: "transparent"
+                        radius: 40 * Global.sizes.scale
+                        border.width: 0.5
+                        border.color: "#808080"
+                        height: 176 * Global.sizes.scale
+
+
+                        RowLayout {
+                            id: _c
+                            anchors.left: parent.left
+                            anchors.leftMargin: Global.sizes.defaultMargin
+                            anchors.right: parent.right
+                            anchors.rightMargin: Global.sizes.defaultMargin
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            DxIconColored {
+                                source: "images/add.svg"
+                                sourceSize {
+                                    width: 100 * Global.sizes.scale
+                                    height: 100 * Global.sizes.scale
+                                }
+                            }
+
+                            DxLabel {
+                                Layout.fillWidth: true
+                                text: "Pair New TV"
+                                font.pixelSize: 55 * Global.sizes.scale
+                            }
+
+                            DxIconColored {
+                                source: "images/keyboard_arrow_right.svg"
+                                sourceSize {
+                                    width: 96 * Global.sizes.scale
+                                    height: 96 * Global.sizes.scale
+                                }
+                            }
+                        }
+
+                        TapHandler {
+                            gesturePolicy: TapHandler.WithinBounds
+                            onTapped: {
+                                if (Global.appData.isConnected) {
+                                    Device.disconnectFromDevice()
+                                }
+
+                                Global.appData.gotoPairingScreen()
+                            }
+                        }
+                    }
+
+                    Repeater {
+                        model: _lstTv
+
+                        DxcPairedRoom {
+                            Layout.fillWidth: true
+                            text: tvName
+
+                            onPairRequested: {
+                                isConnecting = true
+                                Device.scanServices(tvAddress)
+                            }
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                visible: !Global.appData.isConnected
+
+                DxIconColored {
+                    source: "images/pan_tool_alt.svg"
+                    sourceSize {
+                        width: 144 * Global.sizes.scale
+                        height: 144 * Global.sizes.scale
+                    }
+                    color: "#7e7979"
+                }
+
+                DxLabel {
+                    text: "Pair this controller\nwith a Displace TV"
+                    font.pixelSize: 55 * Global.sizes.scale
+                    color: "#7e7979"
+                }
+            }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: Global.sizes.defaultSpacing
@@ -16,9 +275,25 @@ DxcPage {
 
             Layout.fillWidth: true
             Layout.preferredHeight: preferredHeight
-            Layout.leftMargin: Global.sizes.defaultMargin
-            Layout.rightMargin: Global.sizes.defaultMargin
+            /* Layout.leftMargin: Global.sizes.defaultMargin
+            Layout.rightMargin: Global.sizes.defaultMargin */
 
+            ColumnLayout {
+                id: _newContent
+                anchors.fill: parent
+
+                DxcMainTitle {
+                    Layout.fillWidth: true
+
+                    onToggleDrawer: _drawer.open()
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+
+            /*
             Component.onCompleted: {
                 let tvs = Global.db.getAllTvs()
                 for (let tv of tvs) {
@@ -107,7 +382,7 @@ DxcPage {
                         }
                     }
                 }
-            }
+            } */
 
             Item {
                 id: _keyboardMode
@@ -170,11 +445,17 @@ DxcPage {
             }
         }
 
+        Item {
+            Layout.fillHeight: true
+            visible: !Global.appData.isConnected
+        }
+
         TrackPad {
             id: _trackpad
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            visible: Global.appData.isConnected
 
             onSendMsg: (obj) => {
                 control.sendMsg(obj)
@@ -211,7 +492,7 @@ DxcPage {
             }
 
             PropertyChanges {
-                target: _flick
+                target: _newContent
                 visible: false
 
             }

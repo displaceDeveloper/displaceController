@@ -18,7 +18,6 @@ Item {
         property string deviceAddress: ""
         property string tvCode: ""
         property string pairingCode: ""
-        property bool isConnected: false
     }
     property alias settings: _settings
 
@@ -185,6 +184,11 @@ Item {
             }
         }
 
+        property var _gotoPairingScreen: null
+        function gotoPairingScreen() {
+            if (_gotoPairingScreen) _gotoPairingScreen()
+        }
+
         property var connOk: null
         function connectSuccessfully() {
             if (connOk) connOk()
@@ -282,7 +286,6 @@ Item {
 
         function onDisconnected() {
             _appData.isConnected = false
-            _swipe.currentIndex = 1
         }
     }
 }

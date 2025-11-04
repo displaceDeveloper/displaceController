@@ -37,6 +37,7 @@ Item {
             maximumTouchPoints: 1
 
             onPressed: (points) => {
+                console.log(`TRACKPAD Pressed`)
                 if (points.length > 0) {
                     const p = points[0]
                     _rc.prevX = p.x
@@ -46,9 +47,12 @@ Item {
 
                 _rc.hasDrag = false
                 _rc.lastSend = Date.now()/1000.0
+
+                console.log(`TRACKPAD Pressed hasDrag: ${ _rc.hasDrag }`)
             }
 
             onUpdated: (points) => {
+                console.log(`TRACKPAD Updated`)
                 if (points.length === 0 || !_rc.hasPrev)
                     return
 
@@ -74,9 +78,12 @@ Item {
 
                 _rc.lastSend = now
                 _rc.hasDrag = true
+
+                console.log(`TRACKPAD Updated hasDrag: ${ _rc.hasDrag }`)
             }
 
             onReleased: {
+                console.log(`TRACKPAD Released hasDrag: ${ _rc.hasDrag }`)
                 _rc.hasPrev = false
 
                 if (!_rc.hasDrag) {
@@ -300,7 +307,7 @@ Item {
     // Scroll bars
     DxcScrollArea {
         anchors.left: parent.left
-        anchors.leftMargin: Global.sizes.defaultMargin
+        // anchors.leftMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
         onValueChanged: (val) => {
@@ -316,7 +323,7 @@ Item {
 
     DxcScrollArea {
         anchors.right: parent.right
-        anchors.rightMargin: Global.sizes.defaultMargin
+        // anchors.rightMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
         onValueChanged: (val) => {

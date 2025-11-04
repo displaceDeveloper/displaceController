@@ -13,6 +13,8 @@ Item {
     property alias color: _lbl.color
     property int padding: Global.sizes.defaultPadding
 
+    property alias contentWidth: _content.width
+
     width: _content.width + padding * 2
     height: _content.height + padding * 2
 

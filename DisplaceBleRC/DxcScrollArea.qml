@@ -14,10 +14,10 @@ Item {
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 85 * Global.sizes.scale
-        height: 615 * Global.sizes.scale
+        width: 107 * Global.sizes.scale
+        height: 700 * Global.sizes.scale
         color: "black"
-        radius: width / 2
+        radius: 40 * Global.sizes.scale
 
         DxIconColored {
             id: _btnUp

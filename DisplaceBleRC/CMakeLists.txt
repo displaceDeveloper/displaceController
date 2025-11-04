@@ -42,16 +42,22 @@ qt_add_qml_module(appDisplaceBleRC
         DxcHeader.qml
         DxcPage.qml
         DxWallmountIndicator.qml
+        DxPane.qml
+        DxHr.qml
+        DxSlider.qml
         DxcQrScanner.qml
         DxcListPairedTv.qml
         DxcListFunctionalButton.qml
         DxcListApp.qml
         DxcListVideo.qml
         DxcScrollArea.qml
+        # DxcPairedRoom.qml
         DxcPairedRoom.qml
         DxcPairedRoomSimplified.qml
+        DxcMainTitle.qml
         DxcSysInfo.qml
         DxcSlideCtrl.qml
+        DxcSlideCtrlMini.qml
         DxcPairButton.qml
         TrackPad.qml
         PgPairing.qml
@@ -67,6 +73,7 @@ qt_add_qml_module(appDisplaceBleRC
         images/logo.png
         images/settings.svg
         images/tv.svg
+        images/tv-x.svg
         images/progress_activity.svg
         images/check.svg
         images/add.svg
@@ -97,6 +104,8 @@ qt_add_qml_module(appDisplaceBleRC
         images/keyboard_double_arrow_left.svg
         images/keyboard_double_arrow_right.svg
         images/pan_tool_alt.svg
+        images/menu.svg
+        images/keyboard_arrow_right.svg
 )
 
 qt_add_resources(appDisplaceBleRC "qtquickcontrols2"

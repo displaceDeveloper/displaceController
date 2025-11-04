@@ -16,9 +16,9 @@ RowLayout {
         Layout.fillWidth: true
     }
 
-    DxButtonIconOnly {
+    /* DxButtonIconOnly {
         source: "images/settings.svg"
-    }
+    } */
 
     DxLabel {
         text: "57%"

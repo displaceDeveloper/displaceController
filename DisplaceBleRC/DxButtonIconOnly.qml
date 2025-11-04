@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-Control {
+Item {
     id: control
 
     signal clicked()
@@ -9,15 +9,18 @@ Control {
     property alias source: _ico.source
     property alias sourceSize: _ico.sourceSize
     property alias color: _ico.color
+    property real padding: 0
 
-    background: Item {
-        TapHandler {
-            gesturePolicy: TapHandler.WithinBounds
-            onTapped: control.clicked()
-        }
+    width: _ico.width + padding * 2
+    height: _ico.height + padding * 2
+
+    DxIconColored {
+        id: _ico
+        anchors.centerIn: parent
     }
 
-    contentItem: DxIconColored {
-        id: _ico
+    TapHandler {
+        gesturePolicy: TapHandler.WithinBounds
+        onTapped: control.clicked()
     }
 }

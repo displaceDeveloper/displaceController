@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import struct, time
+import subprocess
+import socket
 from gi.repository import GLib
 from bluezero import adapter, peripheral, device
 from evdev import UInput, ecodes
@@ -31,8 +33,21 @@ cap = {
 }
 ui = UInput(cap, name="DisplaceTrackpad", bustype=ecodes.BUS_USB)
 
-# EMA state
-# vx, vy = 0.0, 0.0
+
+def send_msg(obj):
+    requests.post('http://127.0.0.1:5564/command', json=obj)
+
+def send_cmd(cmd: str):
+    print(f"[SOCKET] Sending command: {cmd}")
+    try:
+        with socket.create_connection(('127.0.0.1', 6000)) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Optional: allows socket reuse
+            data = cmd.encode('utf-8')
+            if not data.endswith(b'\n'):
+                data += b'\n'
+            s.sendall(data)
+    except Exception as e:
+        print(f"[SOCKET] Failed to send command to 127.0.0.1:6000: {e}")
 
 def rel_move(dx_norm: float, dy_norm: float):
     # global vx, vy
@@ -53,7 +68,7 @@ def left_button(down: bool):
     ui.syn()
 
 def scroll(dwheel: int, hwheel: int):
-    print(f"Scrolling: dwheel={dwheel}, hwheel={hwheel}")
+    # print(f"Scrolling: dwheel={dwheel}, hwheel={hwheel}")
     # Handle horizontal and vertical scrolling
     if dwheel != 0:
         ui.write(ecodes.EV_REL, ecodes.REL_WHEEL, 1 if dwheel > 0 else -1)
@@ -105,6 +120,29 @@ class App:
                 left_button(down)
         elif typ == 3:
             scroll(dwheel, hwheel)
+        elif typ == 4:
+            send_msg({
+                "command":"showScreen",
+                "value":"Home"
+            })
+        elif typ == 5:
+            send_msg({
+                "command": "webviewGoBack"
+            })
+        elif typ == 6:
+            send_msg({
+                "command":"showScreen",
+                "value":"Search"
+            })
+        elif typ == 7:
+            # Play-Pause
+            subprocess.run(["playerctl", "play-pause"])
+        elif typ == 8:
+            # Power on
+            pass
+        elif typ == 9:
+            # Power off
+            send_cmd("TV_OFF")
 
         if cls.tx_char:
             cls.tx_char.set_value(list(data))
@@ -112,7 +150,7 @@ class App:
 
 
 def main():
-    requests.post('http://127.0.0.1:5564/command', json={
+    send_msg({
         "command": "generateCode",
         "tv_code": "ABCDEF",
         "pairing_code": "123456"

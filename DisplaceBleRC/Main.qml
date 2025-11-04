@@ -116,15 +116,12 @@ ApplicationWindow {
                 triggeredOnStart: false
                 onTriggered: {
                     let count = Global.db.getTvCount()
-                    console.log("COUNT:" + count)
 
                     if (count > 0) {
-                        console.log("Use tv list page")
-                        Global.appData.replaceStack(_pgListTv)
+                        Global.appData.replaceStack(_pgMain)
                         return
                     }
 
-                    console.log("Use pairing page")
                     Global.appData.replaceStack(_pgPairing)
                 }
             }
@@ -178,17 +175,6 @@ ApplicationWindow {
                     }
                 }
             }
-
-            /* Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: inputPanel.active ? inputPanel.height : 0
-
-                InputPanel {
-                    id: inputPanel
-                    width: parent.width
-                    visible: active
-                }
-            } */
         }
     }
 
@@ -253,6 +239,8 @@ ApplicationWindow {
     Loader {
         anchors.fill: parent
         sourceComponent: {
+            // return _main
+
             if (camPermission.status !== Qt.PermissionStatus.Granted)
                 return _permission
 
@@ -262,6 +250,13 @@ ApplicationWindow {
             Device.startDeviceDiscovery()
 
             return _main
+        }
+    }
+
+    Component.onCompleted: {
+        let _pairing = _pgPairing
+        Global.appData._gotoPairingScreen = function() {
+            Global.appData.replaceStack(_pairing)
         }
     }
 }
