@@ -1,26 +1,23 @@
 import QtQuick
 
-Rectangle {
+Item {
     id: control
 
     signal clicked()
 
+    property alias text: _lbl.text
+    property alias font: _lbl.font
+    property alias color: _lbl.color
+    property alias textFormat: _lbl.textFormat
+
     property real insetX: -Math.max(44 - width, 0)
     property real insetY: -Math.max(44 - height, 0)
 
-    width: 150 * Global.sizes.scale
-    height: width
-    radius: width / 2
-    color: "black"
+    width: _lbl.width
+    height: _lbl.height
 
-    property alias source: _ico.source
-    property alias sourceSize: _ico.sourceSize
-
-    DxIconColored {
-        id: _ico
-        anchors.centerIn: parent
-
-        source: "images/search.svg"
+    DxLabel {
+        id: _lbl
     }
 
     Item {

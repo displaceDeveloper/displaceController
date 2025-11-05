@@ -10,6 +10,8 @@ Item {
     property alias sourceSize: _ico.sourceSize
     property alias color: _ico.color
     property real padding: 0
+    property real insetX: -Math.max(44 - width, 0)
+    property real insetY: -Math.max(44 - height, 0)
 
     width: _ico.width + padding * 2
     height: _ico.height + padding * 2
@@ -19,8 +21,17 @@ Item {
         anchors.centerIn: parent
     }
 
-    TapHandler {
-        gesturePolicy: TapHandler.WithinBounds
-        onTapped: control.clicked()
+    Item {
+        anchors.fill: parent
+        anchors.leftMargin: control.insetX / 2
+        anchors.rightMargin: control.insetX / 2
+        anchors.topMargin: control.insetY / 2
+        anchors.bottomMargin: control.insetY / 2
+        // opacity: 0.7
+
+        TapHandler {
+            gesturePolicy: TapHandler.WithinBounds
+            onTapped: control.clicked()
+        }
     }
 }

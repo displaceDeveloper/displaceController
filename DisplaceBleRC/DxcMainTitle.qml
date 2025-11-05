@@ -7,13 +7,13 @@ Rectangle {
     signal toggleDrawer()
 
     color: "#201D1D"
-    height: _content.height + Global.sizes.defaultPadding * 2
+    height: _content.height
 
     RowLayout {
         id: _content
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 30 * Global.sizes.scale
+        anchors.margins: 20 * Global.sizes.scale
         anchors.verticalCenter: parent.verticalCenter
 
         DxButtonIconOnly {

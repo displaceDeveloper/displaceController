@@ -9,10 +9,56 @@ Rectangle {
 
     width: 283 * Global.sizes.scale
     height: 138 * Global.sizes.scale
-    color: "#022033"
+    color: "black"
     radius: 40 * Global.sizes.scale
 
-    FlexboxLayout {
+    Rectangle {
+        height: control.height
+        width: control.width - _handle.width
+        color: "transparent"
+
+        DxLabel {
+            id: _on
+            anchors.centerIn: parent
+            text: "TV\nOFF"
+            font.pixelSize: 25 * Global.sizes.scale
+            horizontalAlignment: DxLabel.AlignHCenter
+        }
+
+        DxBusyIndicator {
+            id: _turningOn
+            anchors.centerIn: parent
+            width: 50 * Global.sizes.scale
+            height: width
+            visible: false
+        }
+    }
+
+    Rectangle {
+        x: _handle.width
+        height: control.height
+        width: control.width - _handle.width
+        color: "transparent"
+
+        DxLabel {
+            id: _off
+            anchors.centerIn: parent
+            text: "TV\nON"
+            font.pixelSize: 30 * Global.sizes.scale
+            horizontalAlignment: DxLabel.AlignHCenter
+            visible: false
+        }
+
+        DxBusyIndicator {
+            id: _turningOff
+            anchors.centerIn: parent
+            width: 50 * Global.sizes.scale
+            height: width
+            visible: false
+        }
+    }
+
+    /* FlexboxLayout {
         id: _on
         x: _handle.y
         anchors.top: parent.top
@@ -25,9 +71,9 @@ Rectangle {
             text: "TV\nOFF"
             font.pixelSize: 25 * Global.sizes.scale
         }
-    }
+    } */
 
-    FlexboxLayout {
+    /* FlexboxLayout {
         id: _turningOff
         x: _handle.y * 2 + _handle.width
         anchors.top: parent.top
@@ -50,9 +96,9 @@ Rectangle {
         Item {
             Layout.fillWidth: true
         }
-    }
+    } */
 
-    FlexboxLayout {
+    /* FlexboxLayout {
         id: _off
         x: _handle.y * 2 + _handle.width
         anchors.top: parent.top
@@ -66,9 +112,9 @@ Rectangle {
             text: "TV\nON"
             font.pixelSize: 30 * Global.sizes.scale
         }
-    }
+    } */
 
-    FlexboxLayout {
+    /* FlexboxLayout {
         id: _turningOn
         x: _handle.y
         anchors.top: parent.top
@@ -91,7 +137,7 @@ Rectangle {
         Item {
             Layout.fillWidth: true
         }
-    }
+    } */
 
     Rectangle {
         id: _handle

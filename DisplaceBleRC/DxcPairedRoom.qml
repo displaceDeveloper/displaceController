@@ -40,6 +40,7 @@ Rectangle {
                 Layout.fillWidth: true
                 text: "Living Room"
                 font.pixelSize: 55 * Global.sizes.scale
+                elide: DxLabel.ElideRight
             }
 
             DxLabel {

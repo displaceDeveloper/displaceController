@@ -10,7 +10,7 @@ ApplicationWindow {
     height: Global.sizes.height
     visible: true
     title: qsTr("Remote Control")
-    // visibility: Window.FullScreen
+    visibility: Utils.isAndroid ? Window.FullScreen : Window.Windowed
 
     background: Rectangle {
         color: Global.colors.background
@@ -238,8 +238,11 @@ ApplicationWindow {
 
     Loader {
         anchors.fill: parent
+
         sourceComponent: {
-            // return _main
+            if (!Utils.isAndroid) {
+                return _main
+            }
 
             if (camPermission.status !== Qt.PermissionStatus.Granted)
                 return _permission

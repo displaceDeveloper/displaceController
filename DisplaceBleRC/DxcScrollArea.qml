@@ -4,7 +4,9 @@ Item {
     id: control
 
     signal valueChanged(int val)
+
     property bool horizontalScroll: false
+    property bool enableAnimation: true
 
     width: horizontalScroll ? _rc.height : _rc.width
     height: horizontalScroll ? _rc.width : _rc.height
@@ -14,7 +16,7 @@ Item {
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 107 * Global.sizes.scale
+        width: 115 * Global.sizes.scale
         height: 700 * Global.sizes.scale
         color: "black"
         radius: 40 * Global.sizes.scale
@@ -53,6 +55,8 @@ Item {
             color: "#201D1D"
 
             Behavior on y {
+                enabled: control.enableAnimation
+
                 NumberAnimation {
                     easing.type: Easing.OutCubic
                 }
@@ -62,8 +66,8 @@ Item {
         Timer {
             id: _tmr
 
-            running: _mouse.drag.active
-            interval: 70
+            running: false
+            interval: 80
             repeat: true
             triggeredOnStart: true
             onTriggered: {
@@ -76,20 +80,42 @@ Item {
             anchors.fill: parent
             anchors.margins: -16 * Global.sizes.scale
 
-            drag.target: _rcDrag
-            drag.axis: Drag.YAxis
-            drag.minimumY: _rcDrag.x
-            drag.maximumY: _rc.height - _rcDrag.height - _rcDrag.x
-
             onPressed: (mouse) => {
-                let y = Math.min(mouse.y, _rc.height - _rcDrag.height - _rcDrag.x)
+                control.enableAnimation = false
+
+                let y = Math.max(
+                    mouse.y - _rcDrag.height/2,
+                    0
+                )
+
+                y = Math.min(
+                    y,
+                    _rc.height - _rcDrag.height - _rcDrag.x
+                )
+
+                _rcDrag.y = y
+
+                _tmr.start()
+            }
+
+            onPositionChanged: (mouse) => {
+                let y = Math.max(
+                    mouse.y - _rcDrag.height/2,
+                    0
+                )
+
+                y = Math.min(
+                    y,
+                    _rc.height - _rcDrag.height - _rcDrag.x
+                )
+
                 _rcDrag.y = y
             }
-        }
 
-        property bool isDragging: _mouse.drag.active
-        onIsDraggingChanged: {
-            if (!isDragging) {
+            onReleased: (mouse) => {
+                _tmr.stop()
+
+                control.enableAnimation = true
                 _rcDrag.y = (_rc.height - _rcDrag.height) / 2
                 control.valueChanged(0)
             }

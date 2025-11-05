@@ -127,8 +127,8 @@ DxcPage {
 
     // Page 3: Successfully Paired
     component SuccessfullyPaired: Control {
-        Component.onCompleted: {
-            _txtName.forceActiveFocus()
+        onVisibleChanged: {
+            _txtName.forceActiveFocus(Qt.MouseFocusReason)
         }
 
         background: Rectangle {

@@ -16,57 +16,48 @@ Item {
 
         color: control.enabled ? "#201D1D" : "transparent"
 
-        // ====== Config ======
-        property real sendHz: 120                     // throttle tối đa ~120 FPS
-        // ====================
+        property real sendHz: 120 // ~120 FPS
 
-        // Throttle theo Hz
         property double lastSend: 0
 
-        // Lưu tọa độ touch trước đó
-        property bool   hasPrev: false
         property real   prevX: 0
         property real   prevY: 0
 
         property bool hasDrag: false
 
-        // Khu vực điều khiển: 1 ngón tay để move
-        MultiPointTouchArea {
+        MouseArea {
             anchors.fill: parent
-            minimumTouchPoints: 1
-            maximumTouchPoints: 1
+            preventStealing: true
 
-            onPressed: (points) => {
-                console.log(`TRACKPAD Pressed`)
-                if (points.length > 0) {
-                    const p = points[0]
-                    _rc.prevX = p.x
-                    _rc.prevY = p.y
-                    _rc.hasPrev = true
-                }
+            onPressed: (mouse) => {
+                // console.log(`TRACKPAD Pressed`)
+
+                _rc.prevX = mouse.x
+                _rc.prevY = mouse.y
 
                 _rc.hasDrag = false
                 _rc.lastSend = Date.now()/1000.0
 
-                console.log(`TRACKPAD Pressed hasDrag: ${ _rc.hasDrag }`)
+                // console.log(`TRACKPAD Pressed hasDrag: ${ _rc.hasDrag }`)
             }
 
-            onUpdated: (points) => {
-                console.log(`TRACKPAD Updated`)
-                if (points.length === 0 || !_rc.hasPrev)
-                    return
+            onPositionChanged: (mouse) => {
+                // console.log(`TRACKPAD Updated`)
 
                 const now = Date.now()/1000.0
-                // Throttle gửi
-                if (now - _rc.lastSend < 1.0/_rc.sendHz)
+                const dt = now - _rc.lastSend
+
+                if (dt < 1.0/_rc.sendHz)
                     return
 
-                const p = points[0]
-                // dx, dy theo tỉ lệ kích thước vùng điều khiển (relative, normalized)
-                const dx = (p.x - _rc.prevX) // width
-                const dy = (p.y - _rc.prevY) // height
-                _rc.prevX = p.x
-                _rc.prevY = p.y
+                const dx = (mouse.x - _rc.prevX)
+                const dy = (mouse.y - _rc.prevY)
+                if (dt<0.3 && Math.abs(dx)<1 && Math.abs(dy)<1) {
+                    return
+                }
+
+                _rc.prevX = mouse.x
+                _rc.prevY = mouse.y
 
 
                 control.sendMsg({
@@ -79,12 +70,11 @@ Item {
                 _rc.lastSend = now
                 _rc.hasDrag = true
 
-                console.log(`TRACKPAD Updated hasDrag: ${ _rc.hasDrag }`)
+                // console.log(`TRACKPAD Updated hasDrag: ${ _rc.hasDrag }`)
             }
 
             onReleased: {
-                console.log(`TRACKPAD Released hasDrag: ${ _rc.hasDrag }`)
-                _rc.hasPrev = false
+                // console.log(`TRACKPAD Released hasDrag: ${ _rc.hasDrag }`)
 
                 if (!_rc.hasDrag) {
                     const now = Date.now()/1000.0
@@ -246,7 +236,7 @@ Item {
         width: 781 * Global.sizes.scale
         height: 150 * Global.sizes.scale
 
-        DxLabel {
+        DxLabelClickable {
             id: _btnSpeed
             property bool checked: false
 
@@ -278,36 +268,24 @@ Item {
             }
         }
 
-        Item {
+        DxLabelClickable {
             id: _rcScroll
             anchors.right: parent.right
             anchors.rightMargin: Global.sizes.defaultMargin
-
-            width: _scroll.width
-            height: parent.height
+            anchors.verticalCenter: parent.verticalCenter
 
             property bool checked: false
 
-            DxLabel {
-                id: _scroll
-                anchors.centerIn: parent
-                text: "scroll"
-                color: _rcScroll.checked ? "#42B8FD" : "white"
-            }
+            text: "scroll"
+            color: _rcScroll.checked ? "#42B8FD" : "white"
 
-            TapHandler {
-                gesturePolicy: TapHandler.WithinBounds
-                onTapped: {
-                    _rcScroll.checked = !_rcScroll.checked
-                }
-            }
+            onClicked: _rcScroll.checked = !_rcScroll.checked
         }
     }
 
     // Scroll bars
     DxcScrollArea {
         anchors.left: parent.left
-        // anchors.leftMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
         onValueChanged: (val) => {
@@ -323,7 +301,6 @@ Item {
 
     DxcScrollArea {
         anchors.right: parent.right
-        // anchors.rightMargin: Global.sizes.defaultMargin
         anchors.verticalCenter: parent.verticalCenter
         visible: _rcScroll.checked
         onValueChanged: (val) => {

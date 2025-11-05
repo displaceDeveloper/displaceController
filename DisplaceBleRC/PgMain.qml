@@ -5,11 +5,37 @@ import QtQuick.Layouts
 DxcPage {
     id: control
 
-    Component.onCompleted: {
-        control.refreshTvList()
+    QtObject {
+        id: _local
 
-        if (Global.appData.isConnected) {
-            _drawer.open()
+        property color disconnected: "#ff000000"
+        property color connected: "#99000000"
+    }
+
+    Timer {
+        interval: 500
+        repeat: false
+        running: true
+        triggeredOnStart: false
+
+        onTriggered: {
+            control.refreshTvList()
+
+            if (Global.appData.isConnected) {
+                _drawer.position = 1.0
+            } else {
+                if (Global.settings.deviceAddress.length > 0) {
+                    console.log("Start reconnect")
+
+                    /* Device.scanServices(
+                        Global.settings.deviceAddress
+                    ) */
+
+                    Global.appData.deviceName = Global.settings.tvCode
+                    Global.appData.pairingCode = Global.settings.pairingCode
+                    Global.appData.connectToDevice()
+                }
+            }
         }
     }
 
@@ -41,7 +67,13 @@ DxcPage {
             control.refreshTvList()
 
             if (Global.appData.isConnected) {
-                _drawer.open()
+                _drawer.position = 0
+                _drawer.interactive = true
+                // _rcDim.color = "#99000000"
+            } else {
+                _drawer.position = 1
+                _drawer.interactive = false
+                // _rcDim.color = "#ff000000"
             }
         }
     }
@@ -55,7 +87,11 @@ DxcPage {
         width: 1077 * Global.sizes.scale
         height: window.height
         edge: Qt.LeftEdge
-        interactive: Global.appData.isConnected
+
+        Overlay.modal: Rectangle {
+            id: _rcDim
+            color: Global.appData.isConnected ? _local.connected : _local.disconnected
+        }
 
         background: Rectangle {
             color: "#201D1D"
@@ -66,6 +102,7 @@ DxcPage {
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: Global.sizes.defaultMargin
+            spacing: Global.sizes.defaultSpacing
 
             DxLabel {
                 text: "Controller"
@@ -138,7 +175,7 @@ DxcPage {
                     }
 
                     DxLabel {
-                        text: "0.0.18"
+                        text: Utils.appVersion
                     }
                 }
             }
@@ -275,8 +312,6 @@ DxcPage {
 
             Layout.fillWidth: true
             Layout.preferredHeight: preferredHeight
-            /* Layout.leftMargin: Global.sizes.defaultMargin
-            Layout.rightMargin: Global.sizes.defaultMargin */
 
             ColumnLayout {
                 id: _newContent
@@ -292,97 +327,6 @@ DxcPage {
                     Layout.fillHeight: true
                 }
             }
-
-            /*
-            Component.onCompleted: {
-                let tvs = Global.db.getAllTvs()
-                for (let tv of tvs) {
-                    if (tv.address === Global.settings.deviceAddress) {
-                        continue
-                    }
-
-                    _lstTv.append({
-                        tvId: tv.id,
-                        tvName: tv.name,
-                        tvAddress: tv.address,
-                        tvCode: tv.tv_code,
-                        tvPairingCode: tv.pairing_code
-                    })
-                }
-            }
-
-            ListModel {
-                id: _lstTv
-            }
-
-            Flickable {
-                id: _flick
-
-                anchors.fill: parent
-
-                clip: true
-                contentWidth: _content.width
-                contentHeight: _content.height
-                visible: opacity > 0
-
-                ColumnLayout {
-                    id: _content
-
-                    width: _flick.width
-                    spacing: Global.sizes.defaultSpacing
-
-                    DxButtonIconAndText {
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredHeight: 150 * Global.sizes.scale
-                        source: "images/add.svg"
-                        text: "Pair New TV"
-                    }
-
-                    DxcPairedRoomSimplified {
-                        id: _currentRoom
-                        Layout.fillWidth: true
-                        highlight: true
-                        text: Global.settings.deviceName || "No name"
-                        tvDbId: ""
-
-                        onPowerOffRequested: {
-                            console.log("Power Off Request")
-
-                            const now = Date.now()/1000.0
-                            control.sendMsg({
-                                t: now,
-                                type: "poweroff"
-                            })
-                        }
-
-                        onPowerOnRequested: {
-                            console.log("Power On Request")
-
-                            const now = Date.now() / 1000.0
-                            control.sendMsg({
-                                t: now,
-                                type: "poweron"
-                            })
-                        }
-                    }
-
-                    Repeater {
-                        model: _lstTv
-
-                        DxcPairedRoomSimplified {
-                            Layout.fillWidth: true
-                            text: tvName
-                            compact: true
-                            highlight: false
-                            tvDbId: tvId
-
-                            onRemoveClicked: {
-                                _lstTv.remove(index)
-                            }
-                        }
-                    }
-                }
-            } */
 
             Item {
                 id: _keyboardMode
@@ -424,7 +368,7 @@ DxcPage {
                     onClicked: control.state = ""
                 }
 
-                DxTextField {
+                /* DxTextField {
                     id: _typing
 
                     anchors.left: parent.left
@@ -441,6 +385,25 @@ DxcPage {
                         color: "transparent"
                         radius: 20 * Global.sizes.scale
                     }
+                } */
+
+                DxTextArea {
+                    id: _typing
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+
+                    anchors.topMargin: Global.sizes.defaultMargin
+
+                    background: Rectangle {
+                        border.width: 5 * Global.sizes.scale
+                        border.color: "#585151"
+                        color: "transparent"
+                        radius: 20 * Global.sizes.scale
+                    }
+
+                    placeholderText: "Start typing ..."
                 }
             }
         }
@@ -469,15 +432,52 @@ DxcPage {
                 }
             }
         }
+
+        Item {
+            id: _kbPlaceholder
+            property real keyboardHeight: 0
+            Layout.preferredHeight: keyboardHeight
+        }
+    }
+
+    Connections {
+        target: Qt.inputMethod
+
+        function onKeyboardRectangleChanged() {
+            console.log("Keyboard height changed:" + Qt.inputMethod.keyboardRectangle.height)
+            _kbPlaceholder.keyboardHeight = Qt.inputMethod.keyboardRectangle.height / Screen.devicePixelRatio // - control.SafeArea.margins.bottom
+        }
+
+        function onVisibleChanged() {
+            console.log("Visible changed:" + Qt.inputMethod.visible)
+
+            if (!Qt.inputMethod.visible) {
+                control.state = ""
+            }
+        }
     }
 
     onStateChanged: {
         if (state !== "Keyboard") {
             _trackpad.showKeyBoard = false
+            Qt.inputMethod.hide()
+        } else {
+            _typing.forceActiveFocus()
         }
     }
 
     states: [
+        /* State {
+            name: "NoDevice"
+            when: !Global.appData.isConnected
+
+            PropertyChanges {
+                target: _drawer
+
+                interactive: false
+                position: 1.0
+            }
+        }, */
         State {
             name: "Keyboard"
 
@@ -504,7 +504,7 @@ DxcPage {
         }
     ]
 
-    transitions: [
+    /* transitions: [
         Transition {
             to: "Keyboard"
             reversible: true
@@ -520,15 +520,18 @@ DxcPage {
                 ScriptAction {
                     script: {
                         if (control.state === "Keyboard") {
-                            _typing.forceActiveFocus()
+                            Qt.inputMethod.hide();
+                            _typing.forceActiveFocus(Qt.MouseFocusReason)
+                            // Qt.inputMethod.show()
                         } else {
-                            // control.forceActiveFocus()
+                            // control.forceActiveFocus(Qt.MouseFocusReason)
+                            Qt.inputMethod.hide()
                         }
                     }
                 }
             }
         }
-    ]
+    ] */
 
     function sendMsg(obj) {
         Device.writeData("12345678-1234-5678-1234-56789abcdef0", "12345678-1234-5678-1234-56789abcdef1", obj)

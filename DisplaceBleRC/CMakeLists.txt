@@ -14,7 +14,17 @@ qt_standard_project_setup(REQUIRES 6.9)
 
 qt_add_executable(appDisplaceBleRC main.cpp)
 
+target_compile_definitions(appDisplaceBleRC
+    PRIVATE
+        APP_VER="0.0.21"
+)
+
 set_source_files_properties(Global.qml
+    PROPERTIES
+        QT_QML_SINGLETON_TYPE TRUE
+)
+
+set_source_files_properties(Utils.qml
     PROPERTIES
         QT_QML_SINGLETON_TYPE TRUE
 )
@@ -25,8 +35,11 @@ qt_add_qml_module(appDisplaceBleRC
     QML_FILES
         Global.qml
         Main.qml
+        Utils.qml
         DxLabel.qml
+        DxLabelClickable.qml
         DxTextField.qml
+        DxTextArea.qml
         DxButton.qml
         DxButtonIconOnly.qml
         DxButtonTextOnly.qml
@@ -69,6 +82,7 @@ qt_add_qml_module(appDisplaceBleRC
         deviceinfo.h            deviceinfo.cpp
         serviceinfo.h           serviceinfo.cpp
         device.h                device.cpp
+        cpputils.h              cpputils.cpp
     RESOURCES
         images/logo.png
         images/settings.svg
@@ -133,9 +147,6 @@ target_link_libraries(appDisplaceBleRC
         Qt6::Sql
         ZXing
 )
-
-if(ANDROID)
-endif()
 
 include(GNUInstallDirs)
 install(TARGETS appDisplaceBleRC
