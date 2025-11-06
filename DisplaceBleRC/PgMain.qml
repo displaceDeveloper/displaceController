@@ -20,9 +20,10 @@ DxcPage {
 
         onTriggered: {
             control.refreshTvList()
+            control.updateDrawerState()
 
             if (Global.appData.isConnected) {
-                _drawer.position = 1.0
+                // _drawer.position = 1.0
             } else {
                 if (Global.settings.deviceAddress.length > 0) {
                     console.log("Start reconnect")
@@ -60,21 +61,24 @@ DxcPage {
         }
     }
 
+    function updateDrawerState() {
+        if (Global.appData.isConnected) {
+            console.log("Enable DRAWER")
+            _drawer.position = 0
+            _drawer.interactive = true
+        } else {
+            console.log("Disable DRAWER")
+            _drawer.position = 1
+            _drawer.interactive = false
+        }
+    }
+
     Connections {
         target: Global.appData
 
         function onIsConnectedChanged() {
             control.refreshTvList()
-
-            if (Global.appData.isConnected) {
-                _drawer.position = 0
-                _drawer.interactive = true
-                // _rcDim.color = "#99000000"
-            } else {
-                _drawer.position = 1
-                _drawer.interactive = false
-                // _rcDim.color = "#ff000000"
-            }
+            control.updateDrawerState()
         }
     }
 
@@ -368,25 +372,6 @@ DxcPage {
                     onClicked: control.state = ""
                 }
 
-                /* DxTextField {
-                    id: _typing
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-
-                    anchors.topMargin: Global.sizes.defaultMargin
-
-                    padding: Global.sizes.defaultPadding
-
-                    background: Rectangle {
-                        border.width: 5 * Global.sizes.scale
-                        border.color: "#585151"
-                        color: "transparent"
-                        radius: 20 * Global.sizes.scale
-                    }
-                } */
-
                 DxTextArea {
                     id: _typing
 
@@ -404,7 +389,84 @@ DxcPage {
                     }
 
                     placeholderText: "Start typing ..."
+                    textFormat: TextEdit.PlainText
+
+                    onTextChanged: {
+                        _tmrSendText.restart()
+                    }
                 }
+
+                DxButtonIconOnly {
+                    anchors.right: parent.right
+                    anchors.rightMargin: Global.sizes.defaultMargin
+                    anchors.verticalCenter: _typing.verticalCenter
+                    visible: _typing.text.length > 0
+
+                    rcBk.radius: width / 2
+                    rcBk.border.width: 1
+                    rcBk.border.color: "#7c7171"
+
+                    source: "images/close.svg"
+                    sourceSize {
+                        width: 92 * Global.sizes.scale
+                        height: 92 * Global.sizes.scale
+                    }
+
+                    onClicked: _typing.clear()
+                }
+            }
+        }
+
+        Timer {
+            id: _tmrSendText
+            interval: 1
+            repeat: false
+            triggeredOnStart: false
+
+            property string lastText: ""
+
+            onTriggered: {
+                let len = _typing.text.length
+                let idx = _typing.cursorPosition
+                let tl = lastText.length
+                lastText = _typing.text
+
+                // console.log(`len: ${len}, idx: ${idx}, tl: ${tl}`)
+
+                const now = Date.now()/1000.0
+
+                if (len === idx) {
+                    if (len < tl) {
+                        // delete
+                        control.sendMsg({
+                            t: now,
+                            type: "key",
+                            key1: "",
+                            key2: 1
+                        })
+                        return
+                    }
+                }
+
+                let lastC = _typing.text.charAt(len-1)
+                if (lastC === "\n") {
+                    control.sendMsg({
+                        t: now,
+                        type: "key",
+                        key1: "",
+                        key2: 2
+                    })
+                    return
+                }
+
+                // console.log(`idx: ${idx}, lastC: ${lastC}`)
+
+                control.sendMsg({
+                    t: now,
+                    type: "key",
+                    key1: lastC,
+                    key2: 0
+                })
             }
         }
 
@@ -444,8 +506,11 @@ DxcPage {
         target: Qt.inputMethod
 
         function onKeyboardRectangleChanged() {
-            console.log("Keyboard height changed:" + Qt.inputMethod.keyboardRectangle.height)
-            _kbPlaceholder.keyboardHeight = Qt.inputMethod.keyboardRectangle.height / Screen.devicePixelRatio // - control.SafeArea.margins.bottom
+            if (Qt.inputMethod.visible) {
+                _kbPlaceholder.keyboardHeight = Qt.inputMethod.keyboardRectangle.height / Screen.devicePixelRatio - Qt.inputMethod.anchorRectangle.height * Screen.devicePixelRatio
+            } else {
+                _kbPlaceholder.keyboardHeight = 0
+            }
         }
 
         function onVisibleChanged() {
@@ -467,17 +532,6 @@ DxcPage {
     }
 
     states: [
-        /* State {
-            name: "NoDevice"
-            when: !Global.appData.isConnected
-
-            PropertyChanges {
-                target: _drawer
-
-                interactive: false
-                position: 1.0
-            }
-        }, */
         State {
             name: "Keyboard"
 
@@ -503,35 +557,6 @@ DxcPage {
             }
         }
     ]
-
-    /* transitions: [
-        Transition {
-            to: "Keyboard"
-            reversible: true
-
-            SequentialAnimation {
-                NumberAnimation {
-                    properties: "opacity"
-                    easing.type: Easing.OutQuad
-                }
-                AnchorAnimation {
-                    easing.type: Easing.OutQuad
-                }
-                ScriptAction {
-                    script: {
-                        if (control.state === "Keyboard") {
-                            Qt.inputMethod.hide();
-                            _typing.forceActiveFocus(Qt.MouseFocusReason)
-                            // Qt.inputMethod.show()
-                        } else {
-                            // control.forceActiveFocus(Qt.MouseFocusReason)
-                            Qt.inputMethod.hide()
-                        }
-                    }
-                }
-            }
-        }
-    ] */
 
     function sendMsg(obj) {
         Device.writeData("12345678-1234-5678-1234-56789abcdef0", "12345678-1234-5678-1234-56789abcdef1", obj)

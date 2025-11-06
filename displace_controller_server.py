@@ -17,7 +17,8 @@ import requests
 # uint8  down
 # qint16 dwheel
 # qint16 hwheel
-PKT_FMT = "<B I f f B B h h"
+# char   key
+PKT_FMT = "<B I f f B B h h c B"
 PKT_SIZE = struct.calcsize(PKT_FMT)  # = 11 bytes
 
 SERVICE_UUID = '12345678-1234-5678-1234-56789abcdef0'
@@ -28,7 +29,50 @@ LOCAL_NAME = 'ABCDEF'
 ALPHA = 1.0 # 0.35
 
 cap = {
-    ecodes.EV_KEY: [ecodes.BTN_LEFT],
+    ecodes.EV_KEY: [
+        ecodes.BTN_LEFT,
+
+        # Các phím chữ cái (A-Z)
+        ecodes.KEY_A, ecodes.KEY_B, ecodes.KEY_C, ecodes.KEY_D,
+        ecodes.KEY_E, ecodes.KEY_F, ecodes.KEY_G, ecodes.KEY_H,
+        ecodes.KEY_I, ecodes.KEY_J, ecodes.KEY_K, ecodes.KEY_L,
+        ecodes.KEY_M, ecodes.KEY_N, ecodes.KEY_O, ecodes.KEY_P,
+        ecodes.KEY_Q, ecodes.KEY_R, ecodes.KEY_S, ecodes.KEY_T,
+        ecodes.KEY_U, ecodes.KEY_V, ecodes.KEY_W, ecodes.KEY_X,
+        ecodes.KEY_Y, ecodes.KEY_Z,
+
+        # Các phím số (0-9)
+        ecodes.KEY_0, ecodes.KEY_1, ecodes.KEY_2, ecodes.KEY_3,
+        ecodes.KEY_4, ecodes.KEY_5, ecodes.KEY_6, ecodes.KEY_7,
+        ecodes.KEY_8, ecodes.KEY_9,
+
+        # Các phím ký tự/dấu câu/toán tử cơ bản
+        ecodes.KEY_SPACE, ecodes.KEY_MINUS, ecodes.KEY_EQUAL,
+        ecodes.KEY_LEFTBRACE, ecodes.KEY_RIGHTBRACE, ecodes.KEY_BACKSLASH,
+        ecodes.KEY_SEMICOLON, ecodes.KEY_APOSTROPHE, ecodes.KEY_GRAVE,
+        ecodes.KEY_COMMA, ecodes.KEY_DOT, ecodes.KEY_SLASH,
+
+        # Các phím Chức năng (Functional/Control keys)
+        ecodes.KEY_ENTER, ecodes.KEY_BACKSPACE, ecodes.KEY_TAB,
+        ecodes.KEY_CAPSLOCK, ecodes.KEY_LEFTSHIFT, ecodes.KEY_RIGHTSHIFT,
+        ecodes.KEY_LEFTCTRL, ecodes.KEY_RIGHTCTRL, ecodes.KEY_LEFTALT,
+        ecodes.KEY_RIGHTALT, ecodes.KEY_LEFTMETA, ecodes.KEY_RIGHTMETA,
+
+        # Các phím Mũi tên (Arrows)
+        ecodes.KEY_UP, ecodes.KEY_DOWN, ecodes.KEY_LEFT, ecodes.KEY_RIGHT,
+
+        # Các phím F-keys (F1-F12)
+        ecodes.KEY_F1, ecodes.KEY_F2, ecodes.KEY_F3, ecodes.KEY_F4,
+        ecodes.KEY_F5, ecodes.KEY_F6, ecodes.KEY_F7, ecodes.KEY_F8,
+        ecodes.KEY_F9, ecodes.KEY_F10, ecodes.KEY_F11, ecodes.KEY_F12,
+
+        # Phím điều khiển khác
+        ecodes.KEY_INSERT, ecodes.KEY_DELETE, ecodes.KEY_HOME, ecodes.KEY_END,
+        ecodes.KEY_PAGEUP, ecodes.KEY_PAGEDOWN, ecodes.KEY_ESC,
+        ecodes.KEY_SYSRQ, # Print Screen/SysRq
+        ecodes.KEY_SCROLLLOCK,
+        ecodes.KEY_PAUSE, # Pause/Break
+    ],
     ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y, ecodes.REL_WHEEL, ecodes.REL_HWHEEL],
 }
 ui = UInput(cap, name="DisplaceTrackpad", bustype=ecodes.BUS_USB)
@@ -76,6 +120,35 @@ def scroll(dwheel: int, hwheel: int):
         ui.write(ecodes.EV_REL, ecodes.REL_HWHEEL, 1 if hwheel > 0 else -1)
     ui.syn()
 
+def press_key(key_code: int):
+    ui.write(ecodes.EV_KEY, key_code, 1)  # Key press
+    ui.syn()
+    time.sleep(0.05)  # Short delay
+    ui.write(ecodes.EV_KEY, key_code, 0)  # Key release
+    ui.syn()
+
+def press_key_str(key_str: str):
+    key_map = {
+        'a': ecodes.KEY_A, 'b': ecodes.KEY_B, 'c': ecodes.KEY_C,
+        'd': ecodes.KEY_D, 'e': ecodes.KEY_E, 'f': ecodes.KEY_F,
+        'g': ecodes.KEY_G, 'h': ecodes.KEY_H, 'i': ecodes.KEY_I,
+        'j': ecodes.KEY_J, 'k': ecodes.KEY_K, 'l': ecodes.KEY_L,
+        'm': ecodes.KEY_M, 'n': ecodes.KEY_N, 'o': ecodes.KEY_O,
+        'p': ecodes.KEY_P, 'q': ecodes.KEY_Q, 'r': ecodes.KEY_R,
+        's': ecodes.KEY_S, 't': ecodes.KEY_T, 'u': ecodes.KEY_U,
+        'v': ecodes.KEY_V, 'w': ecodes.KEY_W, 'x': ecodes.KEY_X,
+        'y': ecodes.KEY_Y, 'z': ecodes.KEY_Z,
+        '0': ecodes.KEY_0, '1': ecodes.KEY_1, '2': ecodes.KEY_2,
+        '3': ecodes.KEY_3, '4': ecodes.KEY_4, '5': ecodes.KEY_5,
+        '6': ecodes.KEY_6, '7': ecodes.KEY_7, '8': ecodes.KEY_8,
+        '9': ecodes.KEY_9,
+        'backspace': ecodes.KEY_BACKSPACE,
+        'enter': ecodes.KEY_ENTER
+    }
+    
+    key = key_str.lower()
+    if key in key_map:
+        press_key(key_map[key])
 
 class App:
     tx_char = None
@@ -107,7 +180,7 @@ class App:
             print(f"Invalid packet size: {len(data)}")
             return
 
-        typ, t_ms, dx, dy, btn, down, dwheel, hwheel = struct.unpack(PKT_FMT, data)
+        typ, t_ms, dx, dy, btn, down, dwheel, hwheel, k1, k2 = struct.unpack(PKT_FMT, data)
 
         # typ = ev.get("type")
         if typ == 1: # "move"
@@ -143,6 +216,16 @@ class App:
         elif typ == 9:
             # Power off
             send_cmd("TV_OFF")
+        elif typ == 10:
+            key1 = k1.decode()
+            key2 = k2
+            if key2 == 0:
+                press_key_str(key1)
+            else:
+                if key2 == 1:
+                    press_key_str("backspace")
+                elif key2 == 2:
+                    press_key_str("enter")
 
         if cls.tx_char:
             cls.tx_char.set_value(list(data))

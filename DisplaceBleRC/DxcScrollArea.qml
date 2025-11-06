@@ -16,7 +16,7 @@ Item {
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 115 * Global.sizes.scale
+        width: 130 * Global.sizes.scale
         height: 700 * Global.sizes.scale
         color: "black"
         radius: 40 * Global.sizes.scale

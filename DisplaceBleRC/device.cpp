@@ -29,6 +29,8 @@ struct MousePkt {
     quint8  down;   // 0/1
     qint16  dwheel;
     qint16  hwheel;
+    char    key1;
+    quint8  key2;
 };
 #pragma pack(pop)
 
@@ -37,31 +39,33 @@ QByteArray encodeMsg(const QVariantMap &m) {
     QString type = m.value("type").toString();
 
     if (type=="move") {
-        p.type = 0x01;
+        p.type = 1;
     } else if (type=="btn") {
-        p.type = 0x02;
+        p.type = 2;
     } else if (type=="scroll") {
-        p.type = 0x03;
+        p.type = 3;
     } else if (type=="home") {
-        p.type = 0x04;
+        p.type = 4;
     } else if (type=="goback") {
-        p.type = 0x05;
+        p.type = 5;
     } else if (type=="search") {
-        p.type = 0x06;
+        p.type = 6;
     } else if (type=="play_pause") {
-        p.type = 0x07;
+        p.type = 7;
     } else if (type=="poweron") {
-        p.type = 0x08;
+        p.type = 8;
     } else if (type=="poweroff") {
-        p.type = 0x09;
+        p.type = 9;
+    } else if (type=="key") {
+        p.type = 10;
     }
 
     p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));
 
-    if (p.type==0x01) {
+    if (p.type==1) {
         p.dx = float(m.value("dx").toDouble());
         p.dy = float(m.value("dy").toDouble());
-    } else if (p.type==0x02) {
+    } else if (p.type==2) {
         auto mapBtn = [](const QString &s)->quint8{
             if (s=="left") return 0;
             if (s=="right") return 1;
@@ -72,9 +76,16 @@ QByteArray encodeMsg(const QVariantMap &m) {
         };
         p.btn  = mapBtn(m.value("btn").toString());
         p.down = m.value("down").toBool() ? 1 : 0;
-    } else if (p.type==0x03) {
+    } else if (p.type==3) {
         p.dwheel = m.value("dwheel").toInt();
         p.hwheel = m.value("hwheel").toInt();
+    } else if (p.type == 10) {
+        QByteArray buf = m.value("key1").toString().toUtf8();
+        if (buf.length() > 0) {
+            p.key1 = buf.at(0);
+        }
+
+        p.key2 = m.value("key2").toInt();
     }
 
     return QByteArray(reinterpret_cast<const char*>(&p), sizeof(p));

@@ -13,8 +13,16 @@ Item {
     property real insetX: -Math.max(44 - width, 0)
     property real insetY: -Math.max(44 - height, 0)
 
+    property alias rcBk: _rcBk
+
     width: _ico.width + padding * 2
     height: _ico.height + padding * 2
+
+    Rectangle {
+        id: _rcBk
+        anchors.fill: parent
+        color: "transparent"
+    }
 
     DxIconColored {
         id: _ico

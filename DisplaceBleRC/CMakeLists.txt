@@ -16,7 +16,7 @@ qt_add_executable(appDisplaceBleRC main.cpp)
 
 target_compile_definitions(appDisplaceBleRC
     PRIVATE
-        APP_VER="0.0.21"
+        APP_VER="0.0.22"
 )
 
 set_source_files_properties(Global.qml
