@@ -7,6 +7,8 @@ Item {
 
     property bool horizontalScroll: false
     property bool enableAnimation: true
+    property bool radiusLeft: true
+
 
     width: horizontalScroll ? _rc.height : _rc.width
     height: horizontalScroll ? _rc.width : _rc.height
@@ -16,10 +18,16 @@ Item {
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 130 * Global.sizes.scale
+        width: 150 * Global.sizes.scale
         height: 700 * Global.sizes.scale
         color: "black"
-        radius: 40 * Global.sizes.scale
+
+        topLeftRadius: control.radiusLeft ? 40 * Global.sizes.scale : 0
+        bottomLeftRadius: topLeftRadius
+
+        topRightRadius: control.radiusLeft ? 0 : 40 * Global.sizes.scale
+        bottomRightRadius: control.radiusLeft ? 0 : 40 * Global.sizes.scale
+
 
         DxIconColored {
             id: _btnUp
@@ -49,75 +57,82 @@ Item {
             id: _rcDrag
             anchors.horizontalCenter: parent.horizontalCenter
             y: (parent.height - height) / 2
-            width: 70 * Global.sizes.scale
-            height: 130 * Global.sizes.scale
+            width: 93 * Global.sizes.scale
+            height: 140 * Global.sizes.scale
             radius: 40 * Global.sizes.scale
             color: "#201D1D"
 
-            Behavior on y {
+            /* Behavior on y {
                 enabled: control.enableAnimation
 
                 NumberAnimation {
                     easing.type: Easing.OutCubic
                 }
-            }
+            } */
         }
 
         Timer {
             id: _tmr
 
             running: false
-            interval: 80
+            interval: 5
             repeat: true
             triggeredOnStart: true
             onTriggered: {
-                control.valueChanged((_rc.height - _rcDrag.height) / 2 - _rcDrag.y)
+                let val = _mouse.centerY - _rcDrag.y
+                // console.log(`val: ${ val }`)
+                control.valueChanged(val * 3)
             }
         }
 
-        MouseArea {
-            id: _mouse
+        Item {
+            id: _rcDbg
             anchors.fill: parent
             anchors.margins: -16 * Global.sizes.scale
+            /* border.width: 1
+            border.color: "red"
+            color: "transparent" */
 
-            onPressed: (mouse) => {
-                control.enableAnimation = false
+            MouseArea {
+                id: _mouse
+                anchors.fill: parent
 
-                let y = Math.max(
-                    mouse.y - _rcDrag.height/2,
-                    0
-                )
+                readonly property real offsetY: _rcDrag.height / 2 + _rcDbg.anchors.margins
+                readonly property real minY: _rcDrag.x
+                readonly property real maxY: _rc.height - _rcDrag.height - minY
+                readonly property real centerY: _rc.height / 2 - offsetY
 
-                y = Math.min(
-                    y,
-                    _rc.height - _rcDrag.height - _rcDrag.x
-                )
+                onPressed: (mouse) => {
+                    control.enableAnimation = false
 
-                _rcDrag.y = y
+                    // Clamp [minY - maxY]
+                    let ypos = Math.min(
+                        Math.max(mouse.y - offsetY, minY),
+                        maxY
+                    )
 
-                _tmr.start()
-            }
+                    _rcDrag.y = ypos
 
-            onPositionChanged: (mouse) => {
-                let y = Math.max(
-                    mouse.y - _rcDrag.height/2,
-                    0
-                )
+                    _tmr.start()
+                }
 
-                y = Math.min(
-                    y,
-                    _rc.height - _rcDrag.height - _rcDrag.x
-                )
+                onPositionChanged: (mouse) => {
+                    // Clamp [minY - maxY]
+                    let ypos = Math.min(
+                        Math.max(mouse.y - offsetY, minY),
+                        maxY
+                    )
 
-                _rcDrag.y = y
-            }
+                    _rcDrag.y = ypos
+                }
 
-            onReleased: (mouse) => {
-                _tmr.stop()
+                onReleased: (mouse) => {
+                    _tmr.stop()
 
-                control.enableAnimation = true
-                _rcDrag.y = (_rc.height - _rcDrag.height) / 2
-                control.valueChanged(0)
+                    control.enableAnimation = true
+                    _rcDrag.y = centerY
+                    control.valueChanged(0)
+                }
             }
         }
     }

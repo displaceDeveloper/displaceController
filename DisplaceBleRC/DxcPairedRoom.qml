@@ -6,6 +6,7 @@ Rectangle {
 
     signal pairRequested()
     signal unpairRequested()
+    signal removeClicked()
 
     property alias text: _txtName.text
     property bool highlight: false
@@ -51,15 +52,18 @@ Rectangle {
         }
 
         DxButtonIconAndTextBellow {
+            visible: !control.highlight
             width: contentWidth
-            source: "images/edit_square.svg"
+            source: "images/delete.svg"
             sourceSize {
                 width: 60 * Global.sizes.scale
                 height: 60 * Global.sizes.scale
             }
 
-            text: "RENAME"
+            text: "REMOVE"
             font.pixelSize: 30 * Global.sizes.scale
+
+            onClicked: control.removeClicked()
         }
 
         Item {

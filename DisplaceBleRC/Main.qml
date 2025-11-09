@@ -34,16 +34,6 @@ ApplicationWindow {
     }
 
     Component {
-        id: _pgListTv
-
-        PgListTv {
-            onOpenMainView: {
-                Global.appData.replaceStack(_pgMain)
-            }
-        }
-    }
-
-    Component {
         id: _pgDebug
 
         Item {
@@ -250,7 +240,7 @@ ApplicationWindow {
             if (blePermission.status !== Qt.PermissionStatus.Granted)
                 return _permission
 
-            Device.startDeviceDiscovery()
+            DxBluetooth.startDeviceDiscovery()
 
             return _main
         }

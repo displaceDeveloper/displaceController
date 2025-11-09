@@ -25,7 +25,7 @@ Item {
         DxIconColored {
             id: _ico
             Layout.alignment: Qt.AlignHCenter
-
+            color: control.color
             source: "images/power_settings_new.svg"
         }
 

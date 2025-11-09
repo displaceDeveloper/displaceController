@@ -22,7 +22,6 @@
 #pragma pack(push,1)
 struct MousePkt {
     quint8  type;   // 0x01=move, 0x02=btn
-    quint32 t_ms;   // Date.now() in ms
     float   dx;     // move delta X (float32)
     float   dy;     // move delta Y (float32)
     quint8  btn;    // 0..4
@@ -58,9 +57,11 @@ QByteArray encodeMsg(const QVariantMap &m) {
         p.type = 9;
     } else if (type=="key") {
         p.type = 10;
+    } else if (type=="heartbeat") {
+        p.type = 100;
     }
 
-    p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));
+    // p.t_ms = qToLittleEndian<quint32>(quint32(m.value("t").toDouble()*1000.0));
 
     if (p.type==1) {
         p.dx = float(m.value("dx").toDouble());
@@ -299,6 +300,10 @@ void Device::connectToService(const QString &uuid)
 
         m_characteristics.append(cInfo);
     }
+
+    connect(service, &QLowEnergyService::characteristicRead, this, [](const QLowEnergyCharacteristic &info, const QByteArray &value) {
+        qDebug() << "RECEIVED:" << value;
+    });
 
     QTimer::singleShot(0, this, &Device::characteristicsUpdated);
 }

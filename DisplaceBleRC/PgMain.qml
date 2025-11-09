@@ -28,10 +28,6 @@ DxcPage {
                 if (Global.settings.deviceAddress.length > 0) {
                     console.log("Start reconnect")
 
-                    /* Device.scanServices(
-                        Global.settings.deviceAddress
-                    ) */
-
                     Global.appData.deviceName = Global.settings.tvCode
                     Global.appData.pairingCode = Global.settings.pairingCode
                     Global.appData.connectToDevice()
@@ -68,7 +64,7 @@ DxcPage {
             _drawer.interactive = true
         } else {
             console.log("Disable DRAWER")
-            _drawer.position = 1
+            _drawer.open()
             _drawer.interactive = false
         }
     }
@@ -125,12 +121,14 @@ DxcPage {
 
                 ColumnLayout {
                     width: parent.width
+                    spacing: Global.sizes.defaultSpacing
 
                     RowLayout {
                         Layout.fillWidth: true
 
                         ColumnLayout {
                             Layout.fillWidth: true
+                            spacing: Global.sizes.defaultSpacing
 
                             DxLabel {
                                 text: "CONTROLLER NAME"
@@ -210,7 +208,7 @@ DxcPage {
                         text: Global.settings.deviceName
 
                         onUnpairRequested: {
-                            Device.disconnectFromDevice()
+                            DxBluetooth.disconnectFromDevice()
                         }
                     }
 
@@ -259,7 +257,7 @@ DxcPage {
                             gesturePolicy: TapHandler.WithinBounds
                             onTapped: {
                                 if (Global.appData.isConnected) {
-                                    Device.disconnectFromDevice()
+                                    DxBluetooth.disconnectFromDevice()
                                 }
 
                                 Global.appData.gotoPairingScreen()
@@ -276,7 +274,12 @@ DxcPage {
 
                             onPairRequested: {
                                 isConnecting = true
-                                Device.scanServices(tvAddress)
+                                DxBluetooth.scanServices(tvAddress)
+                            }
+
+                            onRemoveClicked: {
+                                Global.db.removeTv(tvId)
+                                _lstTv.remove(index)
                             }
                         }
                     }
@@ -372,7 +375,7 @@ DxcPage {
                     onClicked: control.state = ""
                 }
 
-                DxTextArea {
+                DxTextField {
                     id: _typing
 
                     anchors.left: parent.left
@@ -389,10 +392,25 @@ DxcPage {
                     }
 
                     placeholderText: "Start typing ..."
-                    textFormat: TextEdit.PlainText
+
+                    wrapMode: DxTextField.WordWrap
+
+                    onCursorPositionChanged: {
+                        let c = cursorPosition
+                    }
 
                     onTextChanged: {
                         _tmrSendText.restart()
+                    }
+
+                    onEditingFinished: {
+                        control.sendMsg({
+                            type: "key",
+                            key1: '\n',
+                            key2: 0
+                        })
+
+                        text = ""
                     }
                 }
 
@@ -423,6 +441,7 @@ DxcPage {
             repeat: false
             triggeredOnStart: false
 
+            property int lastCursorPosition: 0
             property string lastText: ""
 
             onTriggered: {
@@ -431,15 +450,12 @@ DxcPage {
                 let tl = lastText.length
                 lastText = _typing.text
 
-                // console.log(`len: ${len}, idx: ${idx}, tl: ${tl}`)
-
                 const now = Date.now()/1000.0
 
                 if (len === idx) {
                     if (len < tl) {
                         // delete
                         control.sendMsg({
-                            t: now,
                             type: "key",
                             key1: "",
                             key2: 1
@@ -451,7 +467,6 @@ DxcPage {
                 let lastC = _typing.text.charAt(len-1)
                 if (lastC === "\n") {
                     control.sendMsg({
-                        t: now,
                         type: "key",
                         key1: "",
                         key2: 2
@@ -462,7 +477,6 @@ DxcPage {
                 // console.log(`idx: ${idx}, lastC: ${lastC}`)
 
                 control.sendMsg({
-                    t: now,
                     type: "key",
                     key1: lastC,
                     key2: 0
@@ -559,6 +573,10 @@ DxcPage {
     ]
 
     function sendMsg(obj) {
-        Device.writeData("12345678-1234-5678-1234-56789abcdef0", "12345678-1234-5678-1234-56789abcdef1", obj)
+        DxBluetooth.writeData(
+            DxBluetooth.serviceUuid,
+            DxBluetooth.rxUuid,
+            obj
+        )
     }
 }

@@ -16,7 +16,7 @@ qt_add_executable(appDisplaceBleRC main.cpp)
 
 target_compile_definitions(appDisplaceBleRC
     PRIVATE
-        APP_VER="0.0.22"
+        APP_VER="0.0.23"
 )
 
 set_source_files_properties(Global.qml
@@ -29,13 +29,19 @@ set_source_files_properties(Utils.qml
         QT_QML_SINGLETON_TYPE TRUE
 )
 
+set_source_files_properties(DxBluetooth.qml
+    PROPERTIES
+        QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(appDisplaceBleRC
     URI DisplaceBleRC
     VERSION 1.0
     QML_FILES
         Global.qml
-        Main.qml
         Utils.qml
+        DxBluetooth.qml
+        Main.qml
         DxLabel.qml
         DxLabelClickable.qml
         DxTextField.qml
@@ -75,7 +81,7 @@ qt_add_qml_module(appDisplaceBleRC
         TrackPad.qml
         PgPairing.qml
         PgMain.qml
-        PgListTv.qml
+        # PgListTv.qml
     SOURCES
         frameprocessor.h        frameprocessor.cpp
         characteristicinfo.h    characteristicinfo.cpp
@@ -120,6 +126,8 @@ qt_add_qml_module(appDisplaceBleRC
         images/pan_tool_alt.svg
         images/menu.svg
         images/keyboard_arrow_right.svg
+        images/mic.svg
+        images/keyboard_down.svg
 )
 
 qt_add_resources(appDisplaceBleRC "qtquickcontrols2"

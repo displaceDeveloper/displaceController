@@ -61,7 +61,6 @@ Item {
 
 
                 control.sendMsg({
-                    t: now,
                     type: "move",
                     dx: dx * 3, // * _sld.value,
                     dy: dy * 3 // * _sld.value
@@ -77,10 +76,8 @@ Item {
                 // console.log(`TRACKPAD Released hasDrag: ${ _rc.hasDrag }`)
 
                 if (!_rc.hasDrag) {
-                    const now = Date.now()/1000.0
-
-                    control.sendMsg({t: now, type:"btn", btn:"left", down:true })
-                    control.sendMsg({t: now, type:"btn", btn:"left", down:false })
+                    control.sendMsg({type:"btn", btn:"left", down:true })
+                    control.sendMsg({type:"btn", btn:"left", down:false })
                 }
             }
         }
@@ -102,9 +99,7 @@ Item {
             height: width
             source: "images/search.svg"
             onClicked: {
-                const now = Date.now()/1000.0
                 control.sendMsg({
-                    t: now,
                     type: "search"
                 })
             }
@@ -128,9 +123,7 @@ Item {
                 }
 
                 onClicked: {
-                    const now = Date.now()/1000.0
                     control.sendMsg({
-                        t: now,
                         type: "goback"
                     })
                 }
@@ -145,9 +138,7 @@ Item {
                     height: 125 * Global.sizes.scale
                 }
                 onClicked: {
-                    const now = Date.now()/1000.0
                     control.sendMsg({
-                        t: now,
                         type: "home"
                     })
                 }
@@ -163,9 +154,7 @@ Item {
                     height: 125 * Global.sizes.scale
                 }
                 onClicked: {
-                    const now = Date.now()/1000.0
                     control.sendMsg({
-                        t: now,
                         type: "play_pause"
                     })
                 }
@@ -186,112 +175,14 @@ Item {
         color: Global.colors.textMid
     }
 
-    Rectangle {
-        id: _speedUpdater
-
-        anchors.bottomMargin: Global.sizes.defaultMargin
-        anchors.bottom: _rcBottomItems.top
-        anchors.horizontalCenter: _rcBottomItems.horizontalCenter
-
-        width: 450 * Global.sizes.scale
-        height: 85 * Global.sizes.scale
-        radius: 40 * Global.sizes.scale
-        color: "#000000"
-        visible: _btnSpeed.checked
-
-        RowLayout {
-            anchors.fill: parent
-
-            DxButtonTextOnly {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                text: "-"
-                color: "transparent"
-                border.width: 0
-            }
-
-            DxLabel {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                text: "1x"
-            }
-
-            DxButtonTextOnly {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                text: "+"
-                color: "transparent"
-                border.width: 0
-            }
-        }
-    }
-
-    Rectangle {
-        id: _rcBottomItems
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Global.sizes.defaultMargin
-        color: "black"
-        radius: 40 * Global.sizes.scale
-        width: 781 * Global.sizes.scale
-        height: 150 * Global.sizes.scale
-
-        DxLabelClickable {
-            id: _btnSpeed
-            property bool checked: false
-
-            anchors.left: parent.left
-            anchors.leftMargin: Global.sizes.defaultMargin
-            anchors.verticalCenter: parent.verticalCenter
-            text: "<strong>1x</strong> speed"
-            textFormat: DxLabel.RichText
-
-            TapHandler {
-                gesturePolicy: TapHandler.WithinBounds
-                onTapped: _btnSpeed.checked = !_btnSpeed.checked
-            }
-        }
-
-        DxButtonIconOnly {
-            id: _chkKeyboard
-
-            property bool checked: false
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            source: "images/keyboard.svg"
-            color: checked ? "#65b6f7" : "white"
-
-            onClicked: {
-                checked = !checked
-                control.requestKeyboard(checked)
-            }
-        }
-
-        DxLabelClickable {
-            id: _rcScroll
-            anchors.right: parent.right
-            anchors.rightMargin: Global.sizes.defaultMargin
-            anchors.verticalCenter: parent.verticalCenter
-
-            property bool checked: false
-
-            text: "scroll"
-            color: _rcScroll.checked ? "#42B8FD" : "white"
-
-            onClicked: _rcScroll.checked = !_rcScroll.checked
-        }
-    }
-
     // Scroll bars
     DxcScrollArea {
         anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        visible: _rcScroll.checked
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: _scrollBottom.height + Global.sizes.defaultSpacing
+        radiusLeft: false
         onValueChanged: (val) => {
-                            const now = Date.now()/1000.0
                             control.sendMsg({
-                                t: now,
                                 type: "scroll",
                                 dwheel: val,
                                 hwheel: 0
@@ -301,12 +192,10 @@ Item {
 
     DxcScrollArea {
         anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        visible: _rcScroll.checked
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: _scrollBottom.height + Global.sizes.defaultSpacing
         onValueChanged: (val) => {
-                            const now = Date.now()/1000.0
                             control.sendMsg({
-                                t: now,
                                 type: "scroll",
                                 dwheel: val,
                                 hwheel: 0
@@ -315,19 +204,67 @@ Item {
     }
 
     DxcScrollArea {
-        anchors.bottom: _rcBottomItems.top
-        anchors.bottomMargin: Global.sizes.defaultMargin
+        id: _scrollBottom
+        anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalScroll: true
-        visible: _rcScroll.checked
         onValueChanged: (val) => {
-                            const now = Date.now()/1000.0
                             control.sendMsg({
-                                t: now,
                                 type: "scroll",
                                 dwheel: 0,
                                 hwheel: val
                             })
                         }
+    }
+
+    DxButtonIconAndTextBellow {
+        id: _chkKeyboard
+
+        property bool checked: false
+
+        anchors.right: _scrollBottom.left
+        anchors.rightMargin: 40 * Global.sizes.scale
+        anchors.bottom: parent.bottom
+        padding: 0
+
+        source: checked ? "images/keyboard_down.svg" : "images/keyboard.svg"
+        sourceSize {
+            width: 100 * Global.sizes.scale
+            height: 100 * Global.sizes.scale
+        }
+        color: checked ? "#65b6f7" : "white"
+        text: "keyboard"
+        font.pixelSize: 35 * Global.sizes.scale
+
+        onClicked: {
+            checked = !checked
+            control.requestKeyboard(checked)
+        }
+    }
+
+    DxButtonIconAndTextBellow {
+        id: _btnVoice
+
+        property bool checked: false
+
+        anchors.left: _scrollBottom.right
+        anchors.leftMargin: 40 * Global.sizes.scale
+        anchors.bottom: parent.bottom
+        padding: 0
+
+        source: "images/mic.svg"
+        sourceSize {
+            width: 100 * Global.sizes.scale
+            height: 100 * Global.sizes.scale
+        }
+
+        color: checked ? "#65b6f7" : "white"
+        text: "voice"
+        font.pixelSize: 35 * Global.sizes.scale
+
+        onClicked: {
+            checked = !checked
+            control.requestKeyboard(checked)
+        }
     }
 }

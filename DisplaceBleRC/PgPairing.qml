@@ -8,6 +8,12 @@ DxcPage {
 
     signal finished()
 
+    onVisibleChanged: {
+        if (visible) {
+            _stack.currentIndex = 0
+        }
+    }
+
     component PairingText: RowLayout {
         DxIconColored {
             source: "images/tv.svg"
@@ -227,6 +233,7 @@ DxcPage {
 
     Component.onCompleted: {
         let obj = _stack
+
         Global.appData.connOk = function() {
             obj.currentIndex = 3
         }
