@@ -16,7 +16,7 @@ qt_add_executable(appDisplaceBleRC main.cpp)
 
 target_compile_definitions(appDisplaceBleRC
     PRIVATE
-        APP_VER="0.0.23"
+        APP_VER="0.0.24"
 )
 
 set_source_files_properties(Global.qml
@@ -143,7 +143,7 @@ set_target_properties(appDisplaceBleRC
         MACOSX_BUNDLE TRUE
         WIN32_EXECUTABLE TRUE
         QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/android
-        QT_ANDROID_MIN_SDK_VERSION 27
+        QT_ANDROID_MIN_SDK_VERSION 28
 )
 
 target_link_libraries(appDisplaceBleRC

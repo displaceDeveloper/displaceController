@@ -62,26 +62,25 @@ Item {
             radius: 40 * Global.sizes.scale
             color: "#201D1D"
 
-            /* Behavior on y {
+            Behavior on y {
                 enabled: control.enableAnimation
 
                 NumberAnimation {
                     easing.type: Easing.OutCubic
                 }
-            } */
+            }
         }
 
         Timer {
             id: _tmr
 
-            running: false
+            running: _mouse.drag.active
             interval: 5
             repeat: true
             triggeredOnStart: true
             onTriggered: {
                 let val = _mouse.centerY - _rcDrag.y
-                // console.log(`val: ${ val }`)
-                control.valueChanged(val * 3)
+                control.valueChanged(val * 0.5)
             }
         }
 
@@ -102,36 +101,14 @@ Item {
                 readonly property real maxY: _rc.height - _rcDrag.height - minY
                 readonly property real centerY: _rc.height / 2 - offsetY
 
-                onPressed: (mouse) => {
-                    control.enableAnimation = false
-
-                    // Clamp [minY - maxY]
-                    let ypos = Math.min(
-                        Math.max(mouse.y - offsetY, minY),
-                        maxY
-                    )
-
-                    _rcDrag.y = ypos
-
-                    _tmr.start()
-                }
-
-                onPositionChanged: (mouse) => {
-                    // Clamp [minY - maxY]
-                    let ypos = Math.min(
-                        Math.max(mouse.y - offsetY, minY),
-                        maxY
-                    )
-
-                    _rcDrag.y = ypos
-                }
-
-                onReleased: (mouse) => {
-                    _tmr.stop()
-
-                    control.enableAnimation = true
-                    _rcDrag.y = centerY
-                    control.valueChanged(0)
+                drag.target: _rcDrag
+                drag.axis: Drag.YAxis
+                drag.minimumY: minY
+                drag.maximumY: maxY
+                drag.onActiveChanged: {
+                    if (!drag.active) {
+                        _rcDrag.y = centerY
+                    }
                 }
             }
         }

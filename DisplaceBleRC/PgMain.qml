@@ -75,6 +75,10 @@ DxcPage {
         function onIsConnectedChanged() {
             control.refreshTvList()
             control.updateDrawerState()
+
+            if (Global.appData.isConnected) {
+                Global.appData.isReconnecting = false
+            }
         }
     }
 
@@ -87,6 +91,7 @@ DxcPage {
         width: 1077 * Global.sizes.scale
         height: window.height
         edge: Qt.LeftEdge
+        dragMargin: 0
 
         Overlay.modal: Rectangle {
             id: _rcDim
@@ -273,7 +278,10 @@ DxcPage {
                             text: tvName
 
                             onPairRequested: {
+                                _drawer.close()
+
                                 isConnecting = true
+                                Global.appData.isReconnecting = true
                                 DxBluetooth.scanServices(tvAddress)
                             }
 
@@ -325,6 +333,7 @@ DxcPage {
                 anchors.fill: parent
 
                 DxcMainTitle {
+                    id: _mainTitle
                     Layout.fillWidth: true
 
                     onToggleDrawer: _drawer.open()
@@ -378,17 +387,24 @@ DxcPage {
                 DxTextField {
                     id: _typing
 
+                    property bool isClearing: false
+
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
 
                     anchors.topMargin: Global.sizes.defaultMargin
+                    anchors.rightMargin: _btnClear.width + Global.sizes.defaultSpacing
 
-                    background: Rectangle {
-                        border.width: 5 * Global.sizes.scale
-                        border.color: "#585151"
-                        color: "transparent"
-                        radius: 20 * Global.sizes.scale
+                    background: Item {
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.rightMargin: -(_btnClear.width + Global.sizes.defaultSpacing)
+                            border.width: 5 * Global.sizes.scale
+                            border.color: "#585151"
+                            color: "transparent"
+                            radius: 20 * Global.sizes.scale
+                        }
                     }
 
                     placeholderText: "Start typing ..."
@@ -400,10 +416,15 @@ DxcPage {
                     }
 
                     onTextChanged: {
+                        if (isClearing) {
+                            isClearing = false
+                            return
+                        }
+
                         _tmrSendText.restart()
                     }
 
-                    onEditingFinished: {
+                    onAccepted: {
                         control.sendMsg({
                             type: "key",
                             key1: '\n',
@@ -412,11 +433,27 @@ DxcPage {
 
                         text = ""
                     }
+
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Backspace) {
+                            if (text.length > 0) {
+                                return
+                            }
+
+                            // console.log(`Delete pressed`)
+                            control.sendMsg({
+                                type: "key",
+                                key1: "",
+                                key2: 1
+                            })
+                        }
+                    }
                 }
 
                 DxButtonIconOnly {
+                    id: _btnClear
                     anchors.right: parent.right
-                    anchors.rightMargin: Global.sizes.defaultMargin
+                    anchors.rightMargin: (5 * Global.sizes.scale) * 3
                     anchors.verticalCenter: _typing.verticalCenter
                     visible: _typing.text.length > 0
 
@@ -430,7 +467,10 @@ DxcPage {
                         height: 92 * Global.sizes.scale
                     }
 
-                    onClicked: _typing.clear()
+                    onClicked: {
+                        _typing.isClearing = true
+                        _typing.clear()
+                    }
                 }
             }
         }
@@ -513,6 +553,52 @@ DxcPage {
             id: _kbPlaceholder
             property real keyboardHeight: 0
             Layout.preferredHeight: keyboardHeight
+        }
+    }
+
+    Item {
+        id: _popReconnect
+        visible: Global.appData.isReconnecting
+        anchors.fill: parent
+        anchors.topMargin: control.mapFromItem(_mainTitle, 0, _mainTitle.y + _mainTitle.height).y
+
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: false
+            preventStealing: true
+
+            // onClicked: _popReconnect.visible = false
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: 0.8
+        }
+
+        Rectangle {
+            id: _rcReconnect
+            anchors.top: parent.top
+            anchors.topMargin: Global.sizes.defaultMargin
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: _layContent.width + Global.sizes.defaultMargin * 2
+            height: _layContent.height + Global.sizes.defaultMargin * 2
+            color: "#201D1D"
+            radius: height / 2
+
+            RowLayout {
+                id: _layContent
+                anchors.centerIn: parent
+
+                DxBusyIndicator {
+                    width: 50 * Global.sizes.scale
+                    height: 50 * Global.sizes.scale
+                }
+
+                DxLabel {
+                    text: "RECONNECTING ..."
+                }
+            }
         }
     }
 

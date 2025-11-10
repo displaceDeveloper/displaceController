@@ -156,6 +156,7 @@ Item {
         property bool isConnected: false
         property bool enableAutoConnect: true
         property bool isJustAutoConnected: false
+        property bool isReconnecting: false
 
         property string deviceName: ""
         property string deviceAddress: ""
