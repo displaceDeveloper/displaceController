@@ -7,6 +7,7 @@ Item {
 
     signal sendMsg(var obj)
     signal requestKeyboard(bool show)
+    signal searchRequested()
 
     property alias showKeyBoard: _chkKeyboard.checked
 
@@ -84,6 +85,7 @@ Item {
     }
 
     Item {
+        id: _topBar
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -94,14 +96,24 @@ Item {
         height: 175 * Global.sizes.scale
 
         DxButtonCircularIcon {
+            property bool checked: false
+
             anchors.left: parent.left
             width: 175 * Global.sizes.scale
             height: width
             source: "images/search.svg"
+            iconColor: checked ? "#65b6f7" : "white"
             onClicked: {
+                checked = !checked
+
                 control.sendMsg({
                     type: "search"
                 })
+
+                // _chkKeyboard.checked = true
+                _chkKeyboard.clicked()
+
+                control.searchRequested()
             }
         }
 
@@ -177,9 +189,15 @@ Item {
 
     // Scroll bars
     DxcScrollArea {
+        // Left
+        id: _scrollLeft
         anchors.left: parent.left
+
+        anchors.top: parent.top
+        anchors.topMargin: _topBar.height + Global.sizes.defaultSpacing * 2
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: _scrollBottom.height + Global.sizes.defaultSpacing
+        anchors.bottomMargin: Global.sizes.defaultSpacing * 2
+
         radiusLeft: false
         onValueChanged: (val) => {
                             control.sendMsg({
@@ -191,9 +209,15 @@ Item {
     }
 
     DxcScrollArea {
+        // Right
+        id: _scrollRight
         anchors.right: parent.right
+
+        anchors.top: parent.top
+        anchors.topMargin: _topBar.height + Global.sizes.defaultSpacing * 2
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: _scrollBottom.height + Global.sizes.defaultSpacing
+        anchors.bottomMargin: Global.sizes.defaultSpacing * 2
+
         onValueChanged: (val) => {
                             control.sendMsg({
                                 type: "scroll",
@@ -206,7 +230,11 @@ Item {
     DxcScrollArea {
         id: _scrollBottom
         anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+        // anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: _scrollLeft.right
+        anchors.leftMargin: Global.sizes.defaultMargin
+        anchors.right: _scrollRight.left
+        anchors.rightMargin: Global.sizes.defaultMargin
         horizontalScroll: true
         onValueChanged: (val) => {
                             control.sendMsg({
@@ -222,9 +250,10 @@ Item {
 
         property bool checked: false
 
-        anchors.right: _scrollBottom.left
-        anchors.rightMargin: 40 * Global.sizes.scale
-        anchors.bottom: parent.bottom
+        anchors.left: _scrollBottom.left
+        anchors.leftMargin: Global.sizes.defaultMargin
+        anchors.bottom: _scrollBottom.top
+        anchors.bottomMargin: Global.sizes.defaultMargin
         padding: 0
 
         source: checked ? "images/keyboard_down.svg" : "images/keyboard.svg"
@@ -247,9 +276,10 @@ Item {
 
         property bool checked: false
 
-        anchors.left: _scrollBottom.right
-        anchors.leftMargin: 40 * Global.sizes.scale
-        anchors.bottom: parent.bottom
+        anchors.right: _scrollBottom.right
+        anchors.rightMargin: Global.sizes.defaultMargin
+        anchors.bottom: _scrollBottom.top
+        anchors.bottomMargin: Global.sizes.defaultMargin
         padding: 0
 
         source: "images/mic.svg"

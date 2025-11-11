@@ -23,6 +23,10 @@ Item {
         Device.writeData(serviceUuid, rxUuid, obj)
     }
 
+    function enableNotification(erviceUuid, rxUuid) {
+        Device.enableNotification(erviceUuid, rxUuid)
+    }
+
     Timer {
         id: _tmrHeartbeat
 

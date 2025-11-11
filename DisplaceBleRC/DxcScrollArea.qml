@@ -10,16 +10,17 @@ Item {
     property bool radiusLeft: true
 
 
-    width: horizontalScroll ? _rc.height : _rc.width
-    height: horizontalScroll ? _rc.width : _rc.height
+    width: horizontalScroll ? 0 : _rc.width
+    height: horizontalScroll ? _rc.width : 0
 
     Rectangle {
         id: _rc
         anchors.centerIn: parent
 
         rotation: horizontalScroll ? 90 : 0
-        width: 150 * Global.sizes.scale
-        height: 700 * Global.sizes.scale
+        width: 120 * Global.sizes.scale
+        height: Math.max(700 * Global.sizes.scale, (control.horizontalScroll ? control.width : control.height))
+
         color: "black"
 
         topLeftRadius: control.radiusLeft ? 40 * Global.sizes.scale : 0

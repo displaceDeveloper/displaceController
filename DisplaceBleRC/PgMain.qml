@@ -78,6 +78,10 @@ DxcPage {
 
             if (Global.appData.isConnected) {
                 Global.appData.isReconnecting = false
+                DxBluetooth.enableNotification(
+                    DxBluetooth.serviceUuid,
+                    DxBluetooth.rxUuid
+                )
             }
         }
     }
@@ -279,6 +283,7 @@ DxcPage {
 
                             onPairRequested: {
                                 _drawer.close()
+                                _popPairing.deviceName = tvName
 
                                 isConnecting = true
                                 Global.appData.isReconnecting = true
@@ -542,10 +547,15 @@ DxcPage {
 
             onRequestKeyboard: (show) => {
                 if (show) {
+                    _typing.placeholderText = "start typing ..."
                     control.state = "Keyboard"
                 } else {
                     control.state = ""
                 }
+            }
+
+            onSearchRequested: {
+                _typing.placeholderText = "search anything ..."
             }
         }
 
@@ -598,6 +608,71 @@ DxcPage {
                 DxLabel {
                     text: "RECONNECTING ..."
                 }
+            }
+        }
+    }
+
+    Item {
+        id: _popPairing
+
+        visible: Global.appData.isReconnecting
+        anchors.fill: parent
+
+        property string deviceName: "Living Room"
+
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: false
+            preventStealing: true
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            // opacity: 0.8
+        }
+
+        ColumnLayout {
+            anchors.centerIn: parent
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+
+                DxIconColored {
+                    source: "images/tv.svg"
+                    sourceSize {
+                        width: 100 * Global.sizes.scale
+                        height: 100 * Global.sizes.scale
+                    }
+                }
+
+                DxLabel {
+                    text: _popPairing.deviceName
+                    font.pixelSize: 55 * Global.sizes.scale
+                }
+            }
+
+            DxBusyIndicator {
+                Layout.alignment: Qt.AlignHCenter
+            }
+
+            DxLabel {
+                Layout.alignment: Qt.AlignHCenter
+
+                text: "Pairing ..."
+                font.pixelSize: 65 * Global.sizes.scale
+            }
+        }
+
+        DxButtonTextOnly {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 400 * Global.sizes.scale
+            text: "Cancel"
+
+            onClicked: {
+                Global.appData.isReconnecting = false
+                _drawer.open()
             }
         }
     }

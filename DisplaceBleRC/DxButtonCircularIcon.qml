@@ -15,6 +15,7 @@ Rectangle {
 
     property alias source: _ico.source
     property alias sourceSize: _ico.sourceSize
+    property alias iconColor: _ico.color
 
     DxIconColored {
         id: _ico

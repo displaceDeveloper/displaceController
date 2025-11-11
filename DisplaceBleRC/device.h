@@ -55,6 +55,7 @@ public slots:
     void connectToService(const QString &uuid);
     void disconnectFromDevice();
 
+    void enableNotification(const QString &sUuid, const QString &cUuid);
     void writeData(const QString &sUuid, const QString &cUuid, const QVariantMap &obj);
 
 private slots:

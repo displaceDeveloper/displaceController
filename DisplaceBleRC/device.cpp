@@ -301,8 +301,12 @@ void Device::connectToService(const QString &uuid)
         m_characteristics.append(cInfo);
     }
 
+    connect(service, &QLowEnergyService::characteristicChanged, this, [](const QLowEnergyCharacteristic &characteristic, const QByteArray &newValue) {
+        qDebug() << "characteristicChanged:" << newValue;
+    });
+
     connect(service, &QLowEnergyService::characteristicRead, this, [](const QLowEnergyCharacteristic &info, const QByteArray &value) {
-        qDebug() << "RECEIVED:" << value;
+        qDebug() << "characteristicRead:" << value;
     });
 
     QTimer::singleShot(0, this, &Device::characteristicsUpdated);
@@ -336,6 +340,59 @@ void Device::disconnectFromDevice()
         controller->disconnectFromDevice();
     else
         deviceDisconnected();
+}
+
+void Device::enableNotification(const QString &sUuid, const QString &cUuid)
+{
+    qDebug() << "enableNotification()";
+
+    QLowEnergyService *service = nullptr;
+    for (auto s: std::as_const(m_services)) {
+        auto serviceInfo = qobject_cast<ServiceInfo *>(s);
+        if (!serviceInfo)
+            continue;
+
+        if (serviceInfo->getUuid() == sUuid) {
+            service = serviceInfo->service();
+            break;
+        }
+    }
+
+    if (!service) {
+        qDebug() << "Service not available";
+        return;
+    }
+
+    bool found = false;
+    QLowEnergyCharacteristic characteristic;
+    for (auto c: std::as_const(m_characteristics)) {
+        auto characteristicInfo = qobject_cast<CharacteristicInfo *>(c);
+        if (!characteristicInfo)
+            continue;
+
+        auto uuid = characteristicInfo->getUuid();
+        qDebug() << "UUID:" << uuid;
+
+        if (uuid == cUuid) {
+            characteristic = characteristicInfo->getCharacteristic();
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        qDebug() << "Characteristic not available";
+        return;
+    }
+
+    auto cccd = characteristic.descriptor(characteristic.uuid());
+    if (!cccd.isValid()) {
+        qDebug() << "No CCCD for characteristic";
+        return;
+    }
+
+    // 0x0100 = notifications enabled
+    service->writeDescriptor(cccd, QByteArray::fromHex("0100"));
 }
 
 void Device::writeData(const QString &sUuid, const QString &cUuid, const QVariantMap &obj)
