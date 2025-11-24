@@ -1,0 +1,97 @@
+syntax = "proto3";
+package msg;
+
+enum MouseButton {
+  MOUSE_BUTTON_LEFT        = 0;
+  MOUSE_BUTTON_RIGHT       = 1;
+}
+
+enum KeyControl {
+  KEY_BACKSPACE = 0;
+  KEY_ENTER     = 1;
+  KEY_ESCAPE    = 2;
+}
+
+enum ControlType {
+  TYPE_POWER_ON  = 0;
+  TYPE_POWER_OFF = 1;
+
+  TYPE_SEARCH     = 2;
+  TYPE_HOME       = 3;
+  TYPE_BACK       = 4;
+  TYPE_PLAY_PAUSE = 5;
+  TYPE_MUTE_UNMUTE = 6;
+}
+
+message MouseMoveEvent {
+  int32 dx = 1;
+  int32 dy = 2;
+}
+
+message MouseClickEvent {
+  MouseButton button = 1;
+}
+
+message MouseVScrollEvent {
+  double value = 1;
+}
+
+message MouseHScrollEvent {
+  double value = 1;
+}
+
+message KeyStringEvent {
+  string str = 1;
+}
+
+message KeyControlEvent {
+  KeyControl key = 1;
+}
+
+message ControlEvent {
+  ControlType type = 1;
+  optional int32 value = 2;
+}
+
+message HeartBeatReqEvent {
+  optional string version = 1;
+}
+
+message HeartBeatRespEvent {
+  optional bool is_powered_on = 1;
+  optional bool is_muted      = 2;
+  optional double volume      = 3;
+}
+
+message UpgradeRequestEvent {
+  string new_version = 1;
+  string download_url = 2;
+}
+
+message VolumeChangeEvent {
+  double volume = 1;
+}
+
+message InputEvent {
+  oneof payload {
+    MouseMoveEvent mouse_move       = 1;
+    MouseClickEvent mouse_click     = 2;
+    MouseVScrollEvent mouse_vscroll = 3;
+    MouseHScrollEvent mouse_hscroll = 4;
+    KeyStringEvent key_string       = 5;
+    KeyControlEvent key_control     = 6;
+    ControlEvent control_button     = 7;
+    HeartBeatReqEvent heart_beat    = 8;
+    VolumeChangeEvent volume_change = 9;
+  }
+}
+
+message Response {
+  /* oneof payload {
+    HeartBeatRespEvent heart_beat = 1;
+    UpgradeRequestEvent upgrade_request = 2;
+  } */
+  
+  HeartBeatRespEvent heart_beat = 1;
+  optional UpgradeRequestEvent upgrade_request = 2;
+}
