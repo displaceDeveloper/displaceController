@@ -481,14 +481,10 @@ class HeartBeatReqEvent extends $pb.GeneratedMessage {
 
 class HeartBeatRespEvent extends $pb.GeneratedMessage {
   factory HeartBeatRespEvent({
-    $core.bool? isPoweredOn,
-    $core.bool? isMuted,
-    $core.double? volume,
+    $core.int? seq,
   }) {
     final result = create();
-    if (isPoweredOn != null) result.isPoweredOn = isPoweredOn;
-    if (isMuted != null) result.isMuted = isMuted;
-    if (volume != null) result.volume = volume;
+    if (seq != null) result.seq = seq;
     return result;
   }
 
@@ -505,9 +501,7 @@ class HeartBeatRespEvent extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'HeartBeatRespEvent',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'msg'),
       createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'isPoweredOn')
-    ..aOB(2, _omitFieldNames ? '' : 'isMuted')
-    ..aD(3, _omitFieldNames ? '' : 'volume')
+    ..aI(1, _omitFieldNames ? '' : 'seq')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -530,41 +524,27 @@ class HeartBeatRespEvent extends $pb.GeneratedMessage {
   static HeartBeatRespEvent? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.bool get isPoweredOn => $_getBF(0);
+  $core.int get seq => $_getIZ(0);
   @$pb.TagNumber(1)
-  set isPoweredOn($core.bool value) => $_setBool(0, value);
+  set seq($core.int value) => $_setSignedInt32(0, value);
   @$pb.TagNumber(1)
-  $core.bool hasIsPoweredOn() => $_has(0);
+  $core.bool hasSeq() => $_has(0);
   @$pb.TagNumber(1)
-  void clearIsPoweredOn() => $_clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.bool get isMuted => $_getBF(1);
-  @$pb.TagNumber(2)
-  set isMuted($core.bool value) => $_setBool(1, value);
-  @$pb.TagNumber(2)
-  $core.bool hasIsMuted() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearIsMuted() => $_clearField(2);
-
-  @$pb.TagNumber(3)
-  $core.double get volume => $_getN(2);
-  @$pb.TagNumber(3)
-  set volume($core.double value) => $_setDouble(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasVolume() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearVolume() => $_clearField(3);
+  void clearSeq() => $_clearField(1);
 }
 
 class UpgradeRequestEvent extends $pb.GeneratedMessage {
   factory UpgradeRequestEvent({
     $core.String? newVersion,
     $core.String? downloadUrl,
+    $core.String? minVersion,
+    $core.String? maxVersion,
   }) {
     final result = create();
     if (newVersion != null) result.newVersion = newVersion;
     if (downloadUrl != null) result.downloadUrl = downloadUrl;
+    if (minVersion != null) result.minVersion = minVersion;
+    if (maxVersion != null) result.maxVersion = maxVersion;
     return result;
   }
 
@@ -583,6 +563,8 @@ class UpgradeRequestEvent extends $pb.GeneratedMessage {
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'newVersion')
     ..aOS(2, _omitFieldNames ? '' : 'downloadUrl')
+    ..aOS(3, _omitFieldNames ? '' : 'minVersion')
+    ..aOS(4, _omitFieldNames ? '' : 'maxVersion')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -621,6 +603,78 @@ class UpgradeRequestEvent extends $pb.GeneratedMessage {
   $core.bool hasDownloadUrl() => $_has(1);
   @$pb.TagNumber(2)
   void clearDownloadUrl() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get minVersion => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set minVersion($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasMinVersion() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMinVersion() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get maxVersion => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set maxVersion($core.String value) => $_setString(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasMaxVersion() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearMaxVersion() => $_clearField(4);
+}
+
+class MuteChangeEvent extends $pb.GeneratedMessage {
+  factory MuteChangeEvent({
+    $core.bool? isMuted,
+  }) {
+    final result = create();
+    if (isMuted != null) result.isMuted = isMuted;
+    return result;
+  }
+
+  MuteChangeEvent._();
+
+  factory MuteChangeEvent.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MuteChangeEvent.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MuteChangeEvent',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'msg'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'isMuted')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MuteChangeEvent clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MuteChangeEvent copyWith(void Function(MuteChangeEvent) updates) =>
+      super.copyWith((message) => updates(message as MuteChangeEvent))
+          as MuteChangeEvent;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static MuteChangeEvent create() => MuteChangeEvent._();
+  @$core.override
+  MuteChangeEvent createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static MuteChangeEvent getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MuteChangeEvent>(create);
+  static MuteChangeEvent? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get isMuted => $_getBF(0);
+  @$pb.TagNumber(1)
+  set isMuted($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIsMuted() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIsMuted() => $_clearField(1);
 }
 
 class VolumeChangeEvent extends $pb.GeneratedMessage {
@@ -675,6 +729,138 @@ class VolumeChangeEvent extends $pb.GeneratedMessage {
   $core.bool hasVolume() => $_has(0);
   @$pb.TagNumber(1)
   void clearVolume() => $_clearField(1);
+}
+
+class PowerChangeEvent extends $pb.GeneratedMessage {
+  factory PowerChangeEvent({
+    $core.bool? isPoweredOn,
+  }) {
+    final result = create();
+    if (isPoweredOn != null) result.isPoweredOn = isPoweredOn;
+    return result;
+  }
+
+  PowerChangeEvent._();
+
+  factory PowerChangeEvent.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PowerChangeEvent.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PowerChangeEvent',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'msg'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'isPoweredOn')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PowerChangeEvent clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PowerChangeEvent copyWith(void Function(PowerChangeEvent) updates) =>
+      super.copyWith((message) => updates(message as PowerChangeEvent))
+          as PowerChangeEvent;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PowerChangeEvent create() => PowerChangeEvent._();
+  @$core.override
+  PowerChangeEvent createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static PowerChangeEvent getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PowerChangeEvent>(create);
+  static PowerChangeEvent? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get isPoweredOn => $_getBF(0);
+  @$pb.TagNumber(1)
+  set isPoweredOn($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIsPoweredOn() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIsPoweredOn() => $_clearField(1);
+}
+
+class StateUpdatedEvent extends $pb.GeneratedMessage {
+  factory StateUpdatedEvent({
+    $core.bool? isPoweredOn,
+    $core.bool? isMuted,
+    $core.double? volume,
+  }) {
+    final result = create();
+    if (isPoweredOn != null) result.isPoweredOn = isPoweredOn;
+    if (isMuted != null) result.isMuted = isMuted;
+    if (volume != null) result.volume = volume;
+    return result;
+  }
+
+  StateUpdatedEvent._();
+
+  factory StateUpdatedEvent.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory StateUpdatedEvent.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'StateUpdatedEvent',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'msg'),
+      createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'isPoweredOn')
+    ..aOB(2, _omitFieldNames ? '' : 'isMuted')
+    ..aD(3, _omitFieldNames ? '' : 'volume')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  StateUpdatedEvent clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  StateUpdatedEvent copyWith(void Function(StateUpdatedEvent) updates) =>
+      super.copyWith((message) => updates(message as StateUpdatedEvent))
+          as StateUpdatedEvent;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static StateUpdatedEvent create() => StateUpdatedEvent._();
+  @$core.override
+  StateUpdatedEvent createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static StateUpdatedEvent getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<StateUpdatedEvent>(create);
+  static StateUpdatedEvent? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.bool get isPoweredOn => $_getBF(0);
+  @$pb.TagNumber(1)
+  set isPoweredOn($core.bool value) => $_setBool(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasIsPoweredOn() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearIsPoweredOn() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.bool get isMuted => $_getBF(1);
+  @$pb.TagNumber(2)
+  set isMuted($core.bool value) => $_setBool(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasIsMuted() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIsMuted() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.double get volume => $_getN(2);
+  @$pb.TagNumber(3)
+  set volume($core.double value) => $_setDouble(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasVolume() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearVolume() => $_clearField(3);
 }
 
 enum InputEvent_Payload {
@@ -902,14 +1088,32 @@ class InputEvent extends $pb.GeneratedMessage {
   VolumeChangeEvent ensureVolumeChange() => $_ensure(8);
 }
 
+enum Response_Payload {
+  heartBeat,
+  upgradeRequest,
+  muteChange,
+  volumeChange,
+  powerChange,
+  stateUpdated,
+  notSet
+}
+
 class Response extends $pb.GeneratedMessage {
   factory Response({
     HeartBeatRespEvent? heartBeat,
     UpgradeRequestEvent? upgradeRequest,
+    MuteChangeEvent? muteChange,
+    VolumeChangeEvent? volumeChange,
+    PowerChangeEvent? powerChange,
+    StateUpdatedEvent? stateUpdated,
   }) {
     final result = create();
     if (heartBeat != null) result.heartBeat = heartBeat;
     if (upgradeRequest != null) result.upgradeRequest = upgradeRequest;
+    if (muteChange != null) result.muteChange = muteChange;
+    if (volumeChange != null) result.volumeChange = volumeChange;
+    if (powerChange != null) result.powerChange = powerChange;
+    if (stateUpdated != null) result.stateUpdated = stateUpdated;
     return result;
   }
 
@@ -922,14 +1126,32 @@ class Response extends $pb.GeneratedMessage {
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
+  static const $core.Map<$core.int, Response_Payload> _Response_PayloadByTag = {
+    1: Response_Payload.heartBeat,
+    2: Response_Payload.upgradeRequest,
+    3: Response_Payload.muteChange,
+    4: Response_Payload.volumeChange,
+    5: Response_Payload.powerChange,
+    6: Response_Payload.stateUpdated,
+    0: Response_Payload.notSet
+  };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'Response',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'msg'),
       createEmptyInstance: create)
+    ..oo(0, [1, 2, 3, 4, 5, 6])
     ..aOM<HeartBeatRespEvent>(1, _omitFieldNames ? '' : 'heartBeat',
         subBuilder: HeartBeatRespEvent.create)
     ..aOM<UpgradeRequestEvent>(2, _omitFieldNames ? '' : 'upgradeRequest',
         subBuilder: UpgradeRequestEvent.create)
+    ..aOM<MuteChangeEvent>(3, _omitFieldNames ? '' : 'muteChange',
+        subBuilder: MuteChangeEvent.create)
+    ..aOM<VolumeChangeEvent>(4, _omitFieldNames ? '' : 'volumeChange',
+        subBuilder: VolumeChangeEvent.create)
+    ..aOM<PowerChangeEvent>(5, _omitFieldNames ? '' : 'powerChange',
+        subBuilder: PowerChangeEvent.create)
+    ..aOM<StateUpdatedEvent>(6, _omitFieldNames ? '' : 'stateUpdated',
+        subBuilder: StateUpdatedEvent.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -949,6 +1171,21 @@ class Response extends $pb.GeneratedMessage {
   static Response getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Response>(create);
   static Response? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  @$pb.TagNumber(5)
+  @$pb.TagNumber(6)
+  Response_Payload whichPayload() => _Response_PayloadByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  @$pb.TagNumber(5)
+  @$pb.TagNumber(6)
+  void clearPayload() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
   HeartBeatRespEvent get heartBeat => $_getN(0);
@@ -971,6 +1208,50 @@ class Response extends $pb.GeneratedMessage {
   void clearUpgradeRequest() => $_clearField(2);
   @$pb.TagNumber(2)
   UpgradeRequestEvent ensureUpgradeRequest() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  MuteChangeEvent get muteChange => $_getN(2);
+  @$pb.TagNumber(3)
+  set muteChange(MuteChangeEvent value) => $_setField(3, value);
+  @$pb.TagNumber(3)
+  $core.bool hasMuteChange() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearMuteChange() => $_clearField(3);
+  @$pb.TagNumber(3)
+  MuteChangeEvent ensureMuteChange() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  VolumeChangeEvent get volumeChange => $_getN(3);
+  @$pb.TagNumber(4)
+  set volumeChange(VolumeChangeEvent value) => $_setField(4, value);
+  @$pb.TagNumber(4)
+  $core.bool hasVolumeChange() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearVolumeChange() => $_clearField(4);
+  @$pb.TagNumber(4)
+  VolumeChangeEvent ensureVolumeChange() => $_ensure(3);
+
+  @$pb.TagNumber(5)
+  PowerChangeEvent get powerChange => $_getN(4);
+  @$pb.TagNumber(5)
+  set powerChange(PowerChangeEvent value) => $_setField(5, value);
+  @$pb.TagNumber(5)
+  $core.bool hasPowerChange() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearPowerChange() => $_clearField(5);
+  @$pb.TagNumber(5)
+  PowerChangeEvent ensurePowerChange() => $_ensure(4);
+
+  @$pb.TagNumber(6)
+  StateUpdatedEvent get stateUpdated => $_getN(5);
+  @$pb.TagNumber(6)
+  set stateUpdated(StateUpdatedEvent value) => $_setField(6, value);
+  @$pb.TagNumber(6)
+  $core.bool hasStateUpdated() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearStateUpdated() => $_clearField(6);
+  @$pb.TagNumber(6)
+  StateUpdatedEvent ensureStateUpdated() => $_ensure(5);
 }
 
 const $core.bool _omitFieldNames =

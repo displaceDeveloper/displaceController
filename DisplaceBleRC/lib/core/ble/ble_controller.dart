@@ -56,13 +56,7 @@ class BleController extends Notifier<BleState> {
   }
 
   void toggleMute() {
-    var current = state;
-    if (current is! BlePaired) {
-      return;
-    }
-
-    var muted = current.isMuted;
-    state = current.copyWith(isMuted: !muted);
+    _service.toggleMute();
   }
 
   Future<void> downloadAndInstall(String url, {Function(int, int)? onProgress}) async {
@@ -93,5 +87,17 @@ class BleController extends Notifier<BleState> {
     } catch (e) {
       print("Error: $e");
     }
+  }
+
+  void turnOnTv() {
+    _service.turnOnTv();
+  }
+
+  void turnOffTv() {
+    _service.turnOffTv();
+  }
+
+  void showUpdateDialog(bool show) {
+    _service.showUpdateDialog(show);
   }
 }

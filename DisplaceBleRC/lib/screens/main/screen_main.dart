@@ -65,7 +65,7 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
 
   final _hardwareButtonListener = HardwareButtonListener();
   final Connectivity _connectivity = Connectivity();
-  
+
   int? downloadPercent;
 
   _ScreenMainState() {
@@ -243,6 +243,9 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
       }
     });
 
+    var showUpdateDialog =
+        bleState is BlePaired && bleState.showUpdateDialog == true;
+
     return DpPage(
       scaffoldKey: _scaffoldKey,
       body: Stack(
@@ -286,7 +289,9 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
                         keyControl: KeyControlEvent(key: KeyControl.KEY_ENTER),
                       );
 
-                      ref.read(bleControllerProvider.notifier).writeData(evt.writeToBuffer());
+                      ref
+                          .read(bleControllerProvider.notifier)
+                          .writeData(evt.writeToBuffer());
 
                       _kbController.clear();
                       mainController.updateLastString('');
@@ -353,6 +358,15 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
               curve: Curves.easeInOut,
               offset: mainState.showRename ? Offset.zero : const Offset(0, 1),
               child: _renameTv(),
+            ),
+          ),
+          IgnorePointer(
+            ignoring: !showUpdateDialog,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              offset: showUpdateDialog ? Offset.zero : const Offset(0, 1),
+              child: _newVersion(),
             ),
           ),
         ],
@@ -617,7 +631,7 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
             );
             bleController.writeData(evt.writeToBuffer());
           },
-          child: DpIcon(icon: isMuted ? Icons.volume_off : Icons.volume_up,),
+          child: DpIcon(icon: isMuted ? Icons.volume_off : Icons.volume_up),
         ),
       ],
     );
@@ -667,7 +681,6 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
     final bleController = ref.read(bleControllerProvider.notifier);
 
     final mainState = ref.watch(mainProvider);
-    final mainController = ref.read(mainProvider.notifier);
 
     return Container(
       color: Color(0xFF201D1D),
@@ -697,20 +710,20 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
           ),
           DpPowerButton(
             onTurnOn: () {
+              bleController.turnOnTv();
+
               var evt = InputEvent(
                 controlButton: ControlEvent(type: ControlType.TYPE_POWER_ON),
               );
               bleController.writeData(evt.writeToBuffer());
-
-              mainController.turnOnTv();
             },
             onTurnOff: () {
+              bleController.turnOffTv();
+
               var evt = InputEvent(
                 controlButton: ControlEvent(type: ControlType.TYPE_POWER_OFF),
               );
               bleController.writeData(evt.writeToBuffer());
-
-              mainController.turnOffTv();
             },
           ),
         ],
@@ -916,17 +929,137 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
     );
   }
 
+  Widget _newVersion() {
+    var bleState = ref.watch(bleControllerProvider);
+    if (bleState is! BlePaired) {
+      return Container();
+    }
+
+    var newVersion = bleState.newVersion ?? "";
+
+    return Container(
+      color: Colors.black.withAlpha(210),
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 50.0,
+              vertical: 20.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Version $newVersion",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Gap(AppSizes.gap * 2),
+
+                if (downloadPercent == null) ...[
+                  Text(
+                    (bleState.forceUpdate != true)
+                        ? "A new controller version\nis available."
+                        : "A new controller version is available.\nUpdate Required.",
+                    style: TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                  Gap(AppSizes.gap * 2),
+                  DpTextButton(
+                    onPressed: () async {
+                      try {
+                        var current = bleState;
+
+                        var result = await _connectivity.checkConnectivity();
+                        var wifiResult = result.singleWhereOrNull(
+                          (c) => c == ConnectivityResult.wifi,
+                        );
+                        if (wifiResult == null) {
+                          logConn.info(
+                            'Not connected to WiFi, cannot proceed to download',
+                          );
+                          AppSettings.openAppSettings(
+                            type: AppSettingsType.wifi,
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          downloadPercent = 0;
+                        });
+
+                        // Upgrade
+                        ref
+                            .read(bleControllerProvider.notifier)
+                            .downloadAndInstall(
+                              current.newVersionUrl!,
+                              onProgress: (received, total) {
+                                var percent = (received / total * 100).toInt();
+
+                                setState(() {
+                                  downloadPercent = percent == 100
+                                      ? null
+                                      : percent;
+                                });
+                              },
+                            );
+                      } catch (e) {
+                        logConn.info('Failed to check connectivity: $e');
+                        return;
+                      }
+                    },
+                    child: Text("Update"),
+                  ),
+                  if (bleState.forceUpdate != true) ...[
+                    Gap(AppSizes.gap),
+                    DpTextButtonWhite(
+                      onPressed: () {
+                        setState(() {
+                          downloadPercent = null;
+                        });
+                        
+                        ref
+                            .read(bleControllerProvider.notifier)
+                            .showUpdateDialog(false);
+                      },
+                      borderColor: Colors.black,
+                      child: Text("Not Now"),
+                    ),
+                  ],
+                ] else ...[
+                  CircularProgressIndicator(
+                    strokeWidth: 2,
+                    padding: EdgeInsets.all(10),
+                  ),
+                  Gap(AppSizes.gap * 2),
+
+                  Text("Downloading Update", style: TextStyle(color: Colors.black),),
+                  Text("$downloadPercent%", style: TextStyle(color: Colors.black),),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _renameTv() {
     final mainState = ref.watch(mainProvider);
-    // var db = ref.read(dbProvider);
-    // db.getBleDeviceById(current.renameTvId!);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mainState.showRename) {
         return;
       }
 
-      // _nameController.text = current.renameTvName ?? "";
       _nameFocusNode.requestFocus();
     });
 
@@ -1111,48 +1244,43 @@ class _ScreenMainState extends ConsumerState<ScreenMain>
                 ],
               ),
             Gap(AppSizes.gap * 3),
-            if (downloadPercent == null && bleState is BlePaired && bleState.newVersion != null)
+            if (downloadPercent == null &&
+                bleState is BlePaired &&
+                bleState.newVersion != null)
               DpTextButtonWhite(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                  child: Column(children: [
-                    Text("Version ${bleState.newVersion!}", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12),),
-                    Text("Update Now", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),)
-                  ])
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 3,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Version ${bleState.newVersion!}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        "Update Now",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 onPressed: () async {
-                  try {
-                    var current = bleState;
-
-                    var result = await _connectivity.checkConnectivity();
-                    var wifiResult = result.singleWhereOrNull((c) => c == ConnectivityResult.wifi);
-                    if (wifiResult == null) {
-                      logConn.info('Not connected to WiFi, cannot proceed to download');
-                      AppSettings.openAppSettings(type: AppSettingsType.wifi);
-                      return;
-                    }
-
-                    // Upgrade
-
-                    ref.read(bleControllerProvider.notifier).downloadAndInstall(current.newVersionUrl!, 
-                      onProgress: (received, total) {
-                        var percent = (received / total * 100).toInt();
-
-                        setState(() {
-                          downloadPercent = percent == 100 ? null : percent;
-                        });
-                      },
-                    );
-                  } catch (e) {
-                    logConn.info('Failed to check connectivity: $e');
-                    return;
-                  }
-
+                  ref
+                      .read(bleControllerProvider.notifier)
+                      .showUpdateDialog(true);
                 },
               ),
-            if (downloadPercent != null)
-              Text("Downloading update: $downloadPercent%"),
 
+            // if (downloadPercent != null)
+            //  Text("Downloading update: $downloadPercent%"),
             Gap(AppSizes.gap),
             Text(
               "Version ${AppInfo.version}",

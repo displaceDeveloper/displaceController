@@ -196,38 +196,13 @@ final $typed_data.Uint8List heartBeatReqEventDescriptor = $convert.base64Decode(
 const HeartBeatRespEvent$json = {
   '1': 'HeartBeatRespEvent',
   '2': [
-    {
-      '1': 'is_powered_on',
-      '3': 1,
-      '4': 1,
-      '5': 8,
-      '9': 0,
-      '10': 'isPoweredOn',
-      '17': true
-    },
-    {
-      '1': 'is_muted',
-      '3': 2,
-      '4': 1,
-      '5': 8,
-      '9': 1,
-      '10': 'isMuted',
-      '17': true
-    },
-    {'1': 'volume', '3': 3, '4': 1, '5': 1, '9': 2, '10': 'volume', '17': true},
-  ],
-  '8': [
-    {'1': '_is_powered_on'},
-    {'1': '_is_muted'},
-    {'1': '_volume'},
+    {'1': 'seq', '3': 1, '4': 1, '5': 5, '10': 'seq'},
   ],
 };
 
 /// Descriptor for `HeartBeatRespEvent`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List heartBeatRespEventDescriptor = $convert.base64Decode(
-    'ChJIZWFydEJlYXRSZXNwRXZlbnQSJwoNaXNfcG93ZXJlZF9vbhgBIAEoCEgAUgtpc1Bvd2VyZW'
-    'RPbogBARIeCghpc19tdXRlZBgCIAEoCEgBUgdpc011dGVkiAEBEhsKBnZvbHVtZRgDIAEoAUgC'
-    'UgZ2b2x1bWWIAQFCEAoOX2lzX3Bvd2VyZWRfb25CCwoJX2lzX211dGVkQgkKB192b2x1bWU=');
+final $typed_data.Uint8List heartBeatRespEventDescriptor = $convert
+    .base64Decode('ChJIZWFydEJlYXRSZXNwRXZlbnQSEAoDc2VxGAEgASgFUgNzZXE=');
 
 @$core.Deprecated('Use upgradeRequestEventDescriptor instead')
 const UpgradeRequestEvent$json = {
@@ -235,13 +210,28 @@ const UpgradeRequestEvent$json = {
   '2': [
     {'1': 'new_version', '3': 1, '4': 1, '5': 9, '10': 'newVersion'},
     {'1': 'download_url', '3': 2, '4': 1, '5': 9, '10': 'downloadUrl'},
+    {'1': 'min_version', '3': 3, '4': 1, '5': 9, '10': 'minVersion'},
+    {'1': 'max_version', '3': 4, '4': 1, '5': 9, '10': 'maxVersion'},
   ],
 };
 
 /// Descriptor for `UpgradeRequestEvent`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List upgradeRequestEventDescriptor = $convert.base64Decode(
     'ChNVcGdyYWRlUmVxdWVzdEV2ZW50Eh8KC25ld192ZXJzaW9uGAEgASgJUgpuZXdWZXJzaW9uEi'
-    'EKDGRvd25sb2FkX3VybBgCIAEoCVILZG93bmxvYWRVcmw=');
+    'EKDGRvd25sb2FkX3VybBgCIAEoCVILZG93bmxvYWRVcmwSHwoLbWluX3ZlcnNpb24YAyABKAlS'
+    'Cm1pblZlcnNpb24SHwoLbWF4X3ZlcnNpb24YBCABKAlSCm1heFZlcnNpb24=');
+
+@$core.Deprecated('Use muteChangeEventDescriptor instead')
+const MuteChangeEvent$json = {
+  '1': 'MuteChangeEvent',
+  '2': [
+    {'1': 'is_muted', '3': 1, '4': 1, '5': 8, '10': 'isMuted'},
+  ],
+};
+
+/// Descriptor for `MuteChangeEvent`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List muteChangeEventDescriptor = $convert.base64Decode(
+    'Cg9NdXRlQ2hhbmdlRXZlbnQSGQoIaXNfbXV0ZWQYASABKAhSB2lzTXV0ZWQ=');
 
 @$core.Deprecated('Use volumeChangeEventDescriptor instead')
 const VolumeChangeEvent$json = {
@@ -254,6 +244,33 @@ const VolumeChangeEvent$json = {
 /// Descriptor for `VolumeChangeEvent`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List volumeChangeEventDescriptor = $convert.base64Decode(
     'ChFWb2x1bWVDaGFuZ2VFdmVudBIWCgZ2b2x1bWUYASABKAFSBnZvbHVtZQ==');
+
+@$core.Deprecated('Use powerChangeEventDescriptor instead')
+const PowerChangeEvent$json = {
+  '1': 'PowerChangeEvent',
+  '2': [
+    {'1': 'is_powered_on', '3': 1, '4': 1, '5': 8, '10': 'isPoweredOn'},
+  ],
+};
+
+/// Descriptor for `PowerChangeEvent`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List powerChangeEventDescriptor = $convert.base64Decode(
+    'ChBQb3dlckNoYW5nZUV2ZW50EiIKDWlzX3Bvd2VyZWRfb24YASABKAhSC2lzUG93ZXJlZE9u');
+
+@$core.Deprecated('Use stateUpdatedEventDescriptor instead')
+const StateUpdatedEvent$json = {
+  '1': 'StateUpdatedEvent',
+  '2': [
+    {'1': 'is_powered_on', '3': 1, '4': 1, '5': 8, '10': 'isPoweredOn'},
+    {'1': 'is_muted', '3': 2, '4': 1, '5': 8, '10': 'isMuted'},
+    {'1': 'volume', '3': 3, '4': 1, '5': 1, '10': 'volume'},
+  ],
+};
+
+/// Descriptor for `StateUpdatedEvent`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List stateUpdatedEventDescriptor = $convert.base64Decode(
+    'ChFTdGF0ZVVwZGF0ZWRFdmVudBIiCg1pc19wb3dlcmVkX29uGAEgASgIUgtpc1Bvd2VyZWRPbh'
+    'IZCghpc19tdXRlZBgCIAEoCFIHaXNNdXRlZBIWCgZ2b2x1bWUYAyABKAFSBnZvbHVtZQ==');
 
 @$core.Deprecated('Use inputEventDescriptor instead')
 const InputEvent$json = {
@@ -369,6 +386,7 @@ const Response$json = {
       '4': 1,
       '5': 11,
       '6': '.msg.HeartBeatRespEvent',
+      '9': 0,
       '10': 'heartBeat'
     },
     {
@@ -378,17 +396,57 @@ const Response$json = {
       '5': 11,
       '6': '.msg.UpgradeRequestEvent',
       '9': 0,
-      '10': 'upgradeRequest',
-      '17': true
+      '10': 'upgradeRequest'
+    },
+    {
+      '1': 'mute_change',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.msg.MuteChangeEvent',
+      '9': 0,
+      '10': 'muteChange'
+    },
+    {
+      '1': 'volume_change',
+      '3': 4,
+      '4': 1,
+      '5': 11,
+      '6': '.msg.VolumeChangeEvent',
+      '9': 0,
+      '10': 'volumeChange'
+    },
+    {
+      '1': 'power_change',
+      '3': 5,
+      '4': 1,
+      '5': 11,
+      '6': '.msg.PowerChangeEvent',
+      '9': 0,
+      '10': 'powerChange'
+    },
+    {
+      '1': 'state_updated',
+      '3': 6,
+      '4': 1,
+      '5': 11,
+      '6': '.msg.StateUpdatedEvent',
+      '9': 0,
+      '10': 'stateUpdated'
     },
   ],
   '8': [
-    {'1': '_upgrade_request'},
+    {'1': 'payload'},
   ],
 };
 
 /// Descriptor for `Response`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List responseDescriptor = $convert.base64Decode(
-    'CghSZXNwb25zZRI2CgpoZWFydF9iZWF0GAEgASgLMhcubXNnLkhlYXJ0QmVhdFJlc3BFdmVudF'
-    'IJaGVhcnRCZWF0EkYKD3VwZ3JhZGVfcmVxdWVzdBgCIAEoCzIYLm1zZy5VcGdyYWRlUmVxdWVz'
-    'dEV2ZW50SABSDnVwZ3JhZGVSZXF1ZXN0iAEBQhIKEF91cGdyYWRlX3JlcXVlc3Q=');
+    'CghSZXNwb25zZRI4CgpoZWFydF9iZWF0GAEgASgLMhcubXNnLkhlYXJ0QmVhdFJlc3BFdmVudE'
+    'gAUgloZWFydEJlYXQSQwoPdXBncmFkZV9yZXF1ZXN0GAIgASgLMhgubXNnLlVwZ3JhZGVSZXF1'
+    'ZXN0RXZlbnRIAFIOdXBncmFkZVJlcXVlc3QSNwoLbXV0ZV9jaGFuZ2UYAyABKAsyFC5tc2cuTX'
+    'V0ZUNoYW5nZUV2ZW50SABSCm11dGVDaGFuZ2USPQoNdm9sdW1lX2NoYW5nZRgEIAEoCzIWLm1z'
+    'Zy5Wb2x1bWVDaGFuZ2VFdmVudEgAUgx2b2x1bWVDaGFuZ2USOgoMcG93ZXJfY2hhbmdlGAUgAS'
+    'gLMhUubXNnLlBvd2VyQ2hhbmdlRXZlbnRIAFILcG93ZXJDaGFuZ2USPQoNc3RhdGVfdXBkYXRl'
+    'ZBgGIAEoCzIWLm1zZy5TdGF0ZVVwZGF0ZWRFdmVudEgAUgxzdGF0ZVVwZGF0ZWRCCQoHcGF5bG'
+    '9hZA==');

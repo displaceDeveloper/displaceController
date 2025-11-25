@@ -13,19 +13,19 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tmsg.proto\x12\x03msg\"(\n\x0eMouseMoveEvent\x12\n\n\x02\x64x\x18\x01 \x01(\x05\x12\n\n\x02\x64y\x18\x02 \x01(\x05\"3\n\x0fMouseClickEvent\x12 \n\x06\x62utton\x18\x01 \x01(\x0e\x32\x10.msg.MouseButton\"\"\n\x11MouseVScrollEvent\x12\r\n\x05value\x18\x01 \x01(\x01\"\"\n\x11MouseHScrollEvent\x12\r\n\x05value\x18\x01 \x01(\x01\"\x1d\n\x0eKeyStringEvent\x12\x0b\n\x03str\x18\x01 \x01(\t\"/\n\x0fKeyControlEvent\x12\x1c\n\x03key\x18\x01 \x01(\x0e\x32\x0f.msg.KeyControl\"L\n\x0c\x43ontrolEvent\x12\x1e\n\x04type\x18\x01 \x01(\x0e\x32\x10.msg.ControlType\x12\x12\n\x05value\x18\x02 \x01(\x05H\x00\x88\x01\x01\x42\x08\n\x06_value\"5\n\x11HeartBeatReqEvent\x12\x14\n\x07version\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\n\n\x08_version\"\x86\x01\n\x12HeartBeatRespEvent\x12\x1a\n\ris_powered_on\x18\x01 \x01(\x08H\x00\x88\x01\x01\x12\x15\n\x08is_muted\x18\x02 \x01(\x08H\x01\x88\x01\x01\x12\x13\n\x06volume\x18\x03 \x01(\x01H\x02\x88\x01\x01\x42\x10\n\x0e_is_powered_onB\x0b\n\t_is_mutedB\t\n\x07_volume\"@\n\x13UpgradeRequestEvent\x12\x13\n\x0bnew_version\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\"#\n\x11VolumeChangeEvent\x12\x0e\n\x06volume\x18\x01 \x01(\x01\"\xb5\x03\n\nInputEvent\x12)\n\nmouse_move\x18\x01 \x01(\x0b\x32\x13.msg.MouseMoveEventH\x00\x12+\n\x0bmouse_click\x18\x02 \x01(\x0b\x32\x14.msg.MouseClickEventH\x00\x12/\n\rmouse_vscroll\x18\x03 \x01(\x0b\x32\x16.msg.MouseVScrollEventH\x00\x12/\n\rmouse_hscroll\x18\x04 \x01(\x0b\x32\x16.msg.MouseHScrollEventH\x00\x12)\n\nkey_string\x18\x05 \x01(\x0b\x32\x13.msg.KeyStringEventH\x00\x12+\n\x0bkey_control\x18\x06 \x01(\x0b\x32\x14.msg.KeyControlEventH\x00\x12+\n\x0e\x63ontrol_button\x18\x07 \x01(\x0b\x32\x11.msg.ControlEventH\x00\x12,\n\nheart_beat\x18\x08 \x01(\x0b\x32\x16.msg.HeartBeatReqEventH\x00\x12/\n\rvolume_change\x18\t \x01(\x0b\x32\x16.msg.VolumeChangeEventH\x00\x42\t\n\x07payload\"\x83\x01\n\x08Response\x12+\n\nheart_beat\x18\x01 \x01(\x0b\x32\x17.msg.HeartBeatRespEvent\x12\x36\n\x0fupgrade_request\x18\x02 \x01(\x0b\x32\x18.msg.UpgradeRequestEventH\x00\x88\x01\x01\x42\x12\n\x10_upgrade_request*<\n\x0bMouseButton\x12\x15\n\x11MOUSE_BUTTON_LEFT\x10\x00\x12\x16\n\x12MOUSE_BUTTON_RIGHT\x10\x01*>\n\nKeyControl\x12\x11\n\rKEY_BACKSPACE\x10\x00\x12\r\n\tKEY_ENTER\x10\x01\x12\x0e\n\nKEY_ESCAPE\x10\x02*\x8e\x01\n\x0b\x43ontrolType\x12\x11\n\rTYPE_POWER_ON\x10\x00\x12\x12\n\x0eTYPE_POWER_OFF\x10\x01\x12\x0f\n\x0bTYPE_SEARCH\x10\x02\x12\r\n\tTYPE_HOME\x10\x03\x12\r\n\tTYPE_BACK\x10\x04\x12\x13\n\x0fTYPE_PLAY_PAUSE\x10\x05\x12\x14\n\x10TYPE_MUTE_UNMUTE\x10\x06\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tmsg.proto\x12\x03msg\"(\n\x0eMouseMoveEvent\x12\n\n\x02\x64x\x18\x01 \x01(\x05\x12\n\n\x02\x64y\x18\x02 \x01(\x05\"3\n\x0fMouseClickEvent\x12 \n\x06\x62utton\x18\x01 \x01(\x0e\x32\x10.msg.MouseButton\"\"\n\x11MouseVScrollEvent\x12\r\n\x05value\x18\x01 \x01(\x01\"\"\n\x11MouseHScrollEvent\x12\r\n\x05value\x18\x01 \x01(\x01\"\x1d\n\x0eKeyStringEvent\x12\x0b\n\x03str\x18\x01 \x01(\t\"/\n\x0fKeyControlEvent\x12\x1c\n\x03key\x18\x01 \x01(\x0e\x32\x0f.msg.KeyControl\"L\n\x0c\x43ontrolEvent\x12\x1e\n\x04type\x18\x01 \x01(\x0e\x32\x10.msg.ControlType\x12\x12\n\x05value\x18\x02 \x01(\x05H\x00\x88\x01\x01\x42\x08\n\x06_value\"5\n\x11HeartBeatReqEvent\x12\x14\n\x07version\x18\x01 \x01(\tH\x00\x88\x01\x01\x42\n\n\x08_version\"!\n\x12HeartBeatRespEvent\x12\x0b\n\x03seq\x18\x01 \x01(\x05\"j\n\x13UpgradeRequestEvent\x12\x13\n\x0bnew_version\x18\x01 \x01(\t\x12\x14\n\x0c\x64ownload_url\x18\x02 \x01(\t\x12\x13\n\x0bmin_version\x18\x03 \x01(\t\x12\x13\n\x0bmax_version\x18\x04 \x01(\t\"#\n\x0fMuteChangeEvent\x12\x10\n\x08is_muted\x18\x01 \x01(\x08\"#\n\x11VolumeChangeEvent\x12\x0e\n\x06volume\x18\x01 \x01(\x01\")\n\x10PowerChangeEvent\x12\x15\n\ris_powered_on\x18\x01 \x01(\x08\"L\n\x11StateUpdatedEvent\x12\x15\n\ris_powered_on\x18\x01 \x01(\x08\x12\x10\n\x08is_muted\x18\x02 \x01(\x08\x12\x0e\n\x06volume\x18\x03 \x01(\x01\"\xb5\x03\n\nInputEvent\x12)\n\nmouse_move\x18\x01 \x01(\x0b\x32\x13.msg.MouseMoveEventH\x00\x12+\n\x0bmouse_click\x18\x02 \x01(\x0b\x32\x14.msg.MouseClickEventH\x00\x12/\n\rmouse_vscroll\x18\x03 \x01(\x0b\x32\x16.msg.MouseVScrollEventH\x00\x12/\n\rmouse_hscroll\x18\x04 \x01(\x0b\x32\x16.msg.MouseHScrollEventH\x00\x12)\n\nkey_string\x18\x05 \x01(\x0b\x32\x13.msg.KeyStringEventH\x00\x12+\n\x0bkey_control\x18\x06 \x01(\x0b\x32\x14.msg.KeyControlEventH\x00\x12+\n\x0e\x63ontrol_button\x18\x07 \x01(\x0b\x32\x11.msg.ControlEventH\x00\x12,\n\nheart_beat\x18\x08 \x01(\x0b\x32\x16.msg.HeartBeatReqEventH\x00\x12/\n\rvolume_change\x18\t \x01(\x0b\x32\x16.msg.VolumeChangeEventH\x00\x42\t\n\x07payload\"\xb7\x02\n\x08Response\x12-\n\nheart_beat\x18\x01 \x01(\x0b\x32\x17.msg.HeartBeatRespEventH\x00\x12\x33\n\x0fupgrade_request\x18\x02 \x01(\x0b\x32\x18.msg.UpgradeRequestEventH\x00\x12+\n\x0bmute_change\x18\x03 \x01(\x0b\x32\x14.msg.MuteChangeEventH\x00\x12/\n\rvolume_change\x18\x04 \x01(\x0b\x32\x16.msg.VolumeChangeEventH\x00\x12-\n\x0cpower_change\x18\x05 \x01(\x0b\x32\x15.msg.PowerChangeEventH\x00\x12/\n\rstate_updated\x18\x06 \x01(\x0b\x32\x16.msg.StateUpdatedEventH\x00\x42\t\n\x07payload*<\n\x0bMouseButton\x12\x15\n\x11MOUSE_BUTTON_LEFT\x10\x00\x12\x16\n\x12MOUSE_BUTTON_RIGHT\x10\x01*>\n\nKeyControl\x12\x11\n\rKEY_BACKSPACE\x10\x00\x12\r\n\tKEY_ENTER\x10\x01\x12\x0e\n\nKEY_ESCAPE\x10\x02*\x8e\x01\n\x0b\x43ontrolType\x12\x11\n\rTYPE_POWER_ON\x10\x00\x12\x12\n\x0eTYPE_POWER_OFF\x10\x01\x12\x0f\n\x0bTYPE_SEARCH\x10\x02\x12\r\n\tTYPE_HOME\x10\x03\x12\r\n\tTYPE_BACK\x10\x04\x12\x13\n\x0fTYPE_PLAY_PAUSE\x10\x05\x12\x14\n\x10TYPE_MUTE_UNMUTE\x10\x06\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'msg_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _MOUSEBUTTON._serialized_start=1212
-  _MOUSEBUTTON._serialized_end=1272
-  _KEYCONTROL._serialized_start=1274
-  _KEYCONTROL._serialized_end=1336
-  _CONTROLTYPE._serialized_start=1339
-  _CONTROLTYPE._serialized_end=1481
+  _MOUSEBUTTON._serialized_start=1490
+  _MOUSEBUTTON._serialized_end=1550
+  _KEYCONTROL._serialized_start=1552
+  _KEYCONTROL._serialized_end=1614
+  _CONTROLTYPE._serialized_start=1617
+  _CONTROLTYPE._serialized_end=1759
   _MOUSEMOVEEVENT._serialized_start=18
   _MOUSEMOVEEVENT._serialized_end=58
   _MOUSECLICKEVENT._serialized_start=60
@@ -42,14 +42,20 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _CONTROLEVENT._serialized_end=341
   _HEARTBEATREQEVENT._serialized_start=343
   _HEARTBEATREQEVENT._serialized_end=396
-  _HEARTBEATRESPEVENT._serialized_start=399
-  _HEARTBEATRESPEVENT._serialized_end=533
-  _UPGRADEREQUESTEVENT._serialized_start=535
-  _UPGRADEREQUESTEVENT._serialized_end=599
-  _VOLUMECHANGEEVENT._serialized_start=601
-  _VOLUMECHANGEEVENT._serialized_end=636
-  _INPUTEVENT._serialized_start=639
-  _INPUTEVENT._serialized_end=1076
-  _RESPONSE._serialized_start=1079
-  _RESPONSE._serialized_end=1210
+  _HEARTBEATRESPEVENT._serialized_start=398
+  _HEARTBEATRESPEVENT._serialized_end=431
+  _UPGRADEREQUESTEVENT._serialized_start=433
+  _UPGRADEREQUESTEVENT._serialized_end=539
+  _MUTECHANGEEVENT._serialized_start=541
+  _MUTECHANGEEVENT._serialized_end=576
+  _VOLUMECHANGEEVENT._serialized_start=578
+  _VOLUMECHANGEEVENT._serialized_end=613
+  _POWERCHANGEEVENT._serialized_start=615
+  _POWERCHANGEEVENT._serialized_end=656
+  _STATEUPDATEDEVENT._serialized_start=658
+  _STATEUPDATEDEVENT._serialized_end=734
+  _INPUTEVENT._serialized_start=737
+  _INPUTEVENT._serialized_end=1174
+  _RESPONSE._serialized_start=1177
+  _RESPONSE._serialized_end=1488
 # @@protoc_insertion_point(module_scope)

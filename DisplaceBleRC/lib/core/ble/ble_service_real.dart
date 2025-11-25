@@ -8,6 +8,7 @@ import 'package:displacerc/core/ble/ble_state.dart';
 import 'package:displacerc/core/logger.dart';
 import 'package:displacerc/core/msg/msg.pb.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 // import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 
 import './ble_service.dart';
@@ -223,7 +224,14 @@ class BleServiceReal implements BleService {
             pairingCode: '', // Add appropriate pairingCode value here
             isMuted: false,
             isPoweredOn: false,
-            volume: 0,
+            isTurningOff: false,
+            isTurningOn: false,
+
+            /* showUpdateDialog: false,
+            downloadPercent: 2,
+            forceUpdate: true,
+            newVersion: "abc",
+            newVersionUrl: "https://example.com", */
           ),
         );
       } else {
@@ -315,10 +323,17 @@ class BleServiceReal implements BleService {
     } catch (_) {}
   }
 
-  void _setState(BleState s) {
+  void _setState(BleState newState) {
     var oldState = state;
 
-    if (s is BlePaired && oldState is! BlePaired) {
+    if (oldState is BlePaired && newState is BlePaired) {
+      if (oldState.isTurningOn==true && newState.isTurningOn==false || oldState.isTurningOff==true && newState.isTurningOff==false) {
+        // Finished turning on
+        logHb.info('Finished turning on TV');
+      }
+    }
+
+    if (oldState is! BlePaired && newState is BlePaired) {
       // Not paired → paired
       // Start heartbeat
       logHb.info('Starting heartbeat sending timer');
@@ -330,7 +345,7 @@ class BleServiceReal implements BleService {
         logHb.info('Sending heartbeat to TV ...');
 
         try {
-          var evt = InputEvent(heartBeat: HeartBeatReqEvent(version: '1.0.0'));
+          var evt = InputEvent(heartBeat: HeartBeatReqEvent(version: AppInfo.version));
           await writeData(data: evt.writeToBuffer());
         } catch (e) {
           logHb.warning('Send heartbeat failed: $e');
@@ -370,9 +385,9 @@ class BleServiceReal implements BleService {
 
           _heartbeatLevel = 1;
         } else if (diff.inSeconds < 4) {
-          logHb.info(
+          /* logHb.info(
             'Heartbeat is healthy. Last received ${diff.inSeconds} seconds ago.',
-          );
+          ); */
 
           var current = state;
           if (current is BlePaired) {
@@ -382,7 +397,7 @@ class BleServiceReal implements BleService {
           _heartbeatLevel = 0;
         }
       });
-    } else if (oldState is BlePaired && s is! BlePaired) {
+    } else if (oldState is BlePaired && newState is! BlePaired) {
       // Paired → not paired
       // Stop heartbeat
       _heartbeatTimer?.cancel();
@@ -396,60 +411,87 @@ class BleServiceReal implements BleService {
       _heartBeatCheck = null;
     }
 
-    state = s;
-    _controller.add(s);
+    state = newState;
+    _controller.add(newState);
 
-    if (s is BlePaired && oldState is! BlePaired) {
+    if (oldState is! BlePaired && newState is BlePaired) {
       // Not paired → paired
       // Check heartbeat response
+      // current is newState
+      var current = state;
+      if (current is! BlePaired) {
+        throw StateError('Invalid state');
+      }
+
       _lastReceivedHeartBeat = DateTime.now();
       _heartbeatResponseStream = subscribeToCharacteristic();
       _heartbeatResponseSub = _heartbeatResponseStream?.listen((data) {
+        var current = state;
+        if (current is! BlePaired) {
+          throw StateError('Invalid state');
+        }
+        
         var resp = Response.fromBuffer(data);
         if (resp.hasHeartBeat()) {
           _lastReceivedHeartBeat = DateTime.now();
 
-          logSys.info('Received heartbeat response from TV');
+          // logSys.info('Received heartbeat response from TV');
+        } else if (resp.hasUpgradeRequest()) {
+          var upgrade = resp.upgradeRequest;
+          logSys.info(
+            'Received upgrade request: version=${upgrade.newVersion}, url=${upgrade.downloadUrl}',
+          );
 
-          int volume = resp.heartBeat.volume.toInt();
-
-          var current = state;
-          if (current is BlePaired) {
-            logSys.info(
-              'Received $volume, current: ${current.volume}',
-            );
-
-            String? newVersion;
-            String? newVersionUrl;
-
-            if (resp.hasUpgradeRequest()) {
-              var upgrade = resp.upgradeRequest;
-              logSys.info(
-                'Received upgrade request: version=${upgrade.newVersion}, url=${upgrade.downloadUrl}',
-              );
-
-              if (isNewer(AppInfo.version, upgrade.newVersion)) {
-                newVersion = upgrade.newVersion;
-                newVersionUrl = upgrade.downloadUrl;
+          if (current.showUpdateDialog != true && (current.lastUpdateNotified == null || DateTime.now().difference(current.lastUpdateNotified!).inMinutes >= 30)) {
+            if (isNewer(AppInfo.version, upgrade.newVersion)) {
+              bool isForceUpdate = isNewer(AppInfo.version, upgrade.minVersion);
+              if (current.newVersion != upgrade.newVersion || current.newVersionUrl != upgrade.downloadUrl) {
+                _setState(
+                  current.copyWith(
+                    newVersion: upgrade.newVersion,
+                    newVersionUrl: upgrade.downloadUrl,
+                    forceUpdate: isForceUpdate,
+                    showUpdateDialog: true,
+                    lastUpdateNotified: DateTime.now(),
+                  ),
+                );
               }
             }
-
-            if (current.isMuted != resp.heartBeat.isMuted ||
-                current.isPoweredOn != resp.heartBeat.isPoweredOn || 
-                current.volume != volume || newVersion != null) {
-              logSys.info('Updating heartbeat state in BlePaired');
-
-              _setState(
-                current.copyWith(
-                  isPoweredOn: resp.heartBeat.isPoweredOn,
-                  isMuted: resp.heartBeat.isMuted,
-                  volume: volume,
-                  newVersion: newVersion,
-                  newVersionUrl: newVersionUrl,
-                ),
-              );
-            }
           }
+        } else if (resp.hasMuteChange()) {
+          bool isMuted = resp.muteChange.isMuted;
+          logSys.info('Received mute change: $isMuted');
+
+          _setState(
+            current.copyWith(
+              isMuted: isMuted,
+            ),
+          );
+        } else if (resp.hasVolumeChange()) {
+          double volume = resp.volumeChange.volume;
+          logSys.info('Received volume change: $volume');
+          FlutterVolumeController.setVolume(volume);
+        } else if (resp.hasPowerChange()) {
+          logSys.info('Received power change response from TV');
+
+          _setState(
+            current.copyWith(
+              isPoweredOn: resp.powerChange.isPoweredOn,
+              isTurningOn: false,
+              isTurningOff: false,
+            ),
+          );
+        } else if (resp.hasStateUpdated()) {
+          var stateUpdated = resp.stateUpdated;
+          logSys.info('Received state updated from TV: isPoweredOn=${stateUpdated.isPoweredOn}, isMuted=${stateUpdated.isMuted}, volume=${stateUpdated.volume}');
+
+          FlutterVolumeController.setVolume(stateUpdated.volume);
+          _setState(
+            current.copyWith(
+              isPoweredOn: stateUpdated.isPoweredOn,
+              isMuted: stateUpdated.isMuted,
+            ),
+          );
         }
       });
     }
@@ -473,6 +515,25 @@ class BleServiceReal implements BleService {
     return false; // Versions are equal
   }
 
+  bool isNewerOrEqual(String oldVersion, String newVersion) {
+    List<String> oldParts = oldVersion.split('.');
+    List<String> newParts = newVersion.split('.');
+
+    for (int i = 0; i < Math.max(oldParts.length, newParts.length); i++) {
+      int oldPart = i < oldParts.length ? int.parse(oldParts[i]) : 0;
+      int newPart = i < newParts.length ? int.parse(newParts[i]) : 0;
+
+      if (newPart > oldPart) {
+        return true;
+      } else if (newPart < oldPart) {
+        return false;
+      }
+    }
+
+    return true; // Versions are equal
+  }
+
+
   @override
   bool isScanning() {
     return _isScanning;
@@ -495,9 +556,68 @@ class BleServiceReal implements BleService {
   @override
   void updateDownloadPercent(int percent)
   {
+    throw UnimplementedError();
+    
     var current = state;
     if (current is BlePaired) {
-      _setState(current.copyWith(downloadPercent: percent));
+      // _setState(current.copyWith(downloadPercent: percent));
+    }
+  }
+
+  @override
+  void toggleMute() {
+    var current = state;
+    if (current is! BlePaired) {
+      return;
+    }
+
+    var muted = current.isMuted;
+    _setState(current.copyWith(isMuted: !muted));
+  }
+
+  @override
+  void turnOnTv() {
+    var current = state;
+    if (current is! BlePaired) {
+      return;
+    }
+
+    _setState(current.copyWith(isTurningOn: true));
+
+    Future.delayed(const Duration(seconds: 7), () {
+      var current = state;
+      if (current is! BlePaired) {
+        return;
+      }
+      
+      _setState(current.copyWith(isTurningOn: false));
+    });
+  }
+
+  @override
+  void turnOffTv() {
+    var current = state;
+    if (current is! BlePaired) {
+      return;
+    }
+
+    _setState(current.copyWith(isTurningOff: true));
+
+    Future.delayed(const Duration(seconds: 7), () {
+      var current = state;
+      if (current is! BlePaired) {
+        return;
+      }
+      
+      _setState(current.copyWith(isTurningOff: false));
+    });
+  }
+
+  @override
+  void showUpdateDialog(bool show) {
+    var current = state;
+    if (current is BlePaired) {
+      _setState(current.copyWith(showUpdateDialog: show, lastUpdateNotified: DateTime.now()));
     }
   }
 }

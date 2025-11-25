@@ -20,17 +20,23 @@ sealed class BleState with _$BleState {
     required BluetoothCharacteristic txCharacteristic,
 
     // Heartbeat data
+    required bool isTurningOn,
+    required bool isTurningOff,
     required bool isPoweredOn,
     required bool isMuted,
-    required int volume,
+    // bool? nextMutedState,
+    // required double volume,
 
     // Id of the device we are reconnecting to
     String? reconnectRemoteId,
 
     // Upgrade
-    int? downloadPercent,
+    bool? showUpdateDialog,
+    // int? downloadPercent,
     String? newVersion,
     String? newVersionUrl,
+    bool? forceUpdate,
+    DateTime? lastUpdateNotified,
   }) = BlePaired;
 
   const factory BleState.failedPairing() = BleFailedPairing;

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MainState implements DiagnosticableTreeMixin {
 
- bool get showStatusBar; bool get showAppBar; bool get isFirstLaunch; bool get showSearch; bool get showKeyboard; String get keyboardInputPlaceholder; String? get lastString; bool get isTurningOn; bool get isTurningOff; String? get activeDeviceName; bool get showRename; String? get renameTvId;// Connection info
+ bool get showStatusBar; bool get showAppBar; bool get isFirstLaunch; bool get showSearch; bool get showKeyboard; String get keyboardInputPlaceholder; String? get lastString; String? get activeDeviceName; bool get showRename; String? get renameTvId;// Connection info
  String? get tvCode; String? get pairingCode;
 /// Create a copy of MainState
 /// with the given fields replaced by the non-null parameter values.
@@ -27,21 +27,21 @@ $MainStateCopyWith<MainState> get copyWith => _$MainStateCopyWithImpl<MainState>
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'MainState'))
-    ..add(DiagnosticsProperty('showStatusBar', showStatusBar))..add(DiagnosticsProperty('showAppBar', showAppBar))..add(DiagnosticsProperty('isFirstLaunch', isFirstLaunch))..add(DiagnosticsProperty('showSearch', showSearch))..add(DiagnosticsProperty('showKeyboard', showKeyboard))..add(DiagnosticsProperty('keyboardInputPlaceholder', keyboardInputPlaceholder))..add(DiagnosticsProperty('lastString', lastString))..add(DiagnosticsProperty('isTurningOn', isTurningOn))..add(DiagnosticsProperty('isTurningOff', isTurningOff))..add(DiagnosticsProperty('activeDeviceName', activeDeviceName))..add(DiagnosticsProperty('showRename', showRename))..add(DiagnosticsProperty('renameTvId', renameTvId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode));
+    ..add(DiagnosticsProperty('showStatusBar', showStatusBar))..add(DiagnosticsProperty('showAppBar', showAppBar))..add(DiagnosticsProperty('isFirstLaunch', isFirstLaunch))..add(DiagnosticsProperty('showSearch', showSearch))..add(DiagnosticsProperty('showKeyboard', showKeyboard))..add(DiagnosticsProperty('keyboardInputPlaceholder', keyboardInputPlaceholder))..add(DiagnosticsProperty('lastString', lastString))..add(DiagnosticsProperty('activeDeviceName', activeDeviceName))..add(DiagnosticsProperty('showRename', showRename))..add(DiagnosticsProperty('renameTvId', renameTvId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainState&&(identical(other.showStatusBar, showStatusBar) || other.showStatusBar == showStatusBar)&&(identical(other.showAppBar, showAppBar) || other.showAppBar == showAppBar)&&(identical(other.isFirstLaunch, isFirstLaunch) || other.isFirstLaunch == isFirstLaunch)&&(identical(other.showSearch, showSearch) || other.showSearch == showSearch)&&(identical(other.showKeyboard, showKeyboard) || other.showKeyboard == showKeyboard)&&(identical(other.keyboardInputPlaceholder, keyboardInputPlaceholder) || other.keyboardInputPlaceholder == keyboardInputPlaceholder)&&(identical(other.lastString, lastString) || other.lastString == lastString)&&(identical(other.isTurningOn, isTurningOn) || other.isTurningOn == isTurningOn)&&(identical(other.isTurningOff, isTurningOff) || other.isTurningOff == isTurningOff)&&(identical(other.activeDeviceName, activeDeviceName) || other.activeDeviceName == activeDeviceName)&&(identical(other.showRename, showRename) || other.showRename == showRename)&&(identical(other.renameTvId, renameTvId) || other.renameTvId == renameTvId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainState&&(identical(other.showStatusBar, showStatusBar) || other.showStatusBar == showStatusBar)&&(identical(other.showAppBar, showAppBar) || other.showAppBar == showAppBar)&&(identical(other.isFirstLaunch, isFirstLaunch) || other.isFirstLaunch == isFirstLaunch)&&(identical(other.showSearch, showSearch) || other.showSearch == showSearch)&&(identical(other.showKeyboard, showKeyboard) || other.showKeyboard == showKeyboard)&&(identical(other.keyboardInputPlaceholder, keyboardInputPlaceholder) || other.keyboardInputPlaceholder == keyboardInputPlaceholder)&&(identical(other.lastString, lastString) || other.lastString == lastString)&&(identical(other.activeDeviceName, activeDeviceName) || other.activeDeviceName == activeDeviceName)&&(identical(other.showRename, showRename) || other.showRename == showRename)&&(identical(other.renameTvId, renameTvId) || other.renameTvId == renameTvId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showStatusBar,showAppBar,isFirstLaunch,showSearch,showKeyboard,keyboardInputPlaceholder,lastString,isTurningOn,isTurningOff,activeDeviceName,showRename,renameTvId,tvCode,pairingCode);
+int get hashCode => Object.hash(runtimeType,showStatusBar,showAppBar,isFirstLaunch,showSearch,showKeyboard,keyboardInputPlaceholder,lastString,activeDeviceName,showRename,renameTvId,tvCode,pairingCode);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'MainState(showStatusBar: $showStatusBar, showAppBar: $showAppBar, isFirstLaunch: $isFirstLaunch, showSearch: $showSearch, showKeyboard: $showKeyboard, keyboardInputPlaceholder: $keyboardInputPlaceholder, lastString: $lastString, isTurningOn: $isTurningOn, isTurningOff: $isTurningOff, activeDeviceName: $activeDeviceName, showRename: $showRename, renameTvId: $renameTvId, tvCode: $tvCode, pairingCode: $pairingCode)';
+  return 'MainState(showStatusBar: $showStatusBar, showAppBar: $showAppBar, isFirstLaunch: $isFirstLaunch, showSearch: $showSearch, showKeyboard: $showKeyboard, keyboardInputPlaceholder: $keyboardInputPlaceholder, lastString: $lastString, activeDeviceName: $activeDeviceName, showRename: $showRename, renameTvId: $renameTvId, tvCode: $tvCode, pairingCode: $pairingCode)';
 }
 
 
@@ -52,7 +52,7 @@ abstract mixin class $MainStateCopyWith<$Res>  {
   factory $MainStateCopyWith(MainState value, $Res Function(MainState) _then) = _$MainStateCopyWithImpl;
 @useResult
 $Res call({
- bool showStatusBar, bool showAppBar, bool isFirstLaunch, bool showSearch, bool showKeyboard, String keyboardInputPlaceholder, String? lastString, bool isTurningOn, bool isTurningOff, String? activeDeviceName, bool showRename, String? renameTvId, String? tvCode, String? pairingCode
+ bool showStatusBar, bool showAppBar, bool isFirstLaunch, bool showSearch, bool showKeyboard, String keyboardInputPlaceholder, String? lastString, String? activeDeviceName, bool showRename, String? renameTvId, String? tvCode, String? pairingCode
 });
 
 
@@ -69,7 +69,7 @@ class _$MainStateCopyWithImpl<$Res>
 
 /// Create a copy of MainState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? showStatusBar = null,Object? showAppBar = null,Object? isFirstLaunch = null,Object? showSearch = null,Object? showKeyboard = null,Object? keyboardInputPlaceholder = null,Object? lastString = freezed,Object? isTurningOn = null,Object? isTurningOff = null,Object? activeDeviceName = freezed,Object? showRename = null,Object? renameTvId = freezed,Object? tvCode = freezed,Object? pairingCode = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? showStatusBar = null,Object? showAppBar = null,Object? isFirstLaunch = null,Object? showSearch = null,Object? showKeyboard = null,Object? keyboardInputPlaceholder = null,Object? lastString = freezed,Object? activeDeviceName = freezed,Object? showRename = null,Object? renameTvId = freezed,Object? tvCode = freezed,Object? pairingCode = freezed,}) {
   return _then(_self.copyWith(
 showStatusBar: null == showStatusBar ? _self.showStatusBar : showStatusBar // ignore: cast_nullable_to_non_nullable
 as bool,showAppBar: null == showAppBar ? _self.showAppBar : showAppBar // ignore: cast_nullable_to_non_nullable
@@ -78,9 +78,7 @@ as bool,showSearch: null == showSearch ? _self.showSearch : showSearch // ignore
 as bool,showKeyboard: null == showKeyboard ? _self.showKeyboard : showKeyboard // ignore: cast_nullable_to_non_nullable
 as bool,keyboardInputPlaceholder: null == keyboardInputPlaceholder ? _self.keyboardInputPlaceholder : keyboardInputPlaceholder // ignore: cast_nullable_to_non_nullable
 as String,lastString: freezed == lastString ? _self.lastString : lastString // ignore: cast_nullable_to_non_nullable
-as String?,isTurningOn: null == isTurningOn ? _self.isTurningOn : isTurningOn // ignore: cast_nullable_to_non_nullable
-as bool,isTurningOff: null == isTurningOff ? _self.isTurningOff : isTurningOff // ignore: cast_nullable_to_non_nullable
-as bool,activeDeviceName: freezed == activeDeviceName ? _self.activeDeviceName : activeDeviceName // ignore: cast_nullable_to_non_nullable
+as String?,activeDeviceName: freezed == activeDeviceName ? _self.activeDeviceName : activeDeviceName // ignore: cast_nullable_to_non_nullable
 as String?,showRename: null == showRename ? _self.showRename : showRename // ignore: cast_nullable_to_non_nullable
 as bool,renameTvId: freezed == renameTvId ? _self.renameTvId : renameTvId // ignore: cast_nullable_to_non_nullable
 as String?,tvCode: freezed == tvCode ? _self.tvCode : tvCode // ignore: cast_nullable_to_non_nullable
@@ -167,10 +165,10 @@ return idle(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  bool isTurningOn,  bool isTurningOff,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)?  idle,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)?  idle,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case MainIdle() when idle != null:
-return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.isTurningOn,_that.isTurningOff,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);case _:
+return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);case _:
   return orElse();
 
 }
@@ -188,10 +186,10 @@ return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showS
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  bool isTurningOn,  bool isTurningOff,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)  idle,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)  idle,}) {final _that = this;
 switch (_that) {
 case MainIdle():
-return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.isTurningOn,_that.isTurningOff,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);}
+return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -205,10 +203,10 @@ return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showS
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  bool isTurningOn,  bool isTurningOff,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)?  idle,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( bool showStatusBar,  bool showAppBar,  bool isFirstLaunch,  bool showSearch,  bool showKeyboard,  String keyboardInputPlaceholder,  String? lastString,  String? activeDeviceName,  bool showRename,  String? renameTvId,  String? tvCode,  String? pairingCode)?  idle,}) {final _that = this;
 switch (_that) {
 case MainIdle() when idle != null:
-return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.isTurningOn,_that.isTurningOff,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);case _:
+return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showSearch,_that.showKeyboard,_that.keyboardInputPlaceholder,_that.lastString,_that.activeDeviceName,_that.showRename,_that.renameTvId,_that.tvCode,_that.pairingCode);case _:
   return null;
 
 }
@@ -220,7 +218,7 @@ return idle(_that.showStatusBar,_that.showAppBar,_that.isFirstLaunch,_that.showS
 
 
 class MainIdle with DiagnosticableTreeMixin implements MainState {
-  const MainIdle({required this.showStatusBar, required this.showAppBar, required this.isFirstLaunch, required this.showSearch, required this.showKeyboard, required this.keyboardInputPlaceholder, this.lastString, required this.isTurningOn, required this.isTurningOff, this.activeDeviceName, required this.showRename, this.renameTvId, this.tvCode, this.pairingCode});
+  const MainIdle({required this.showStatusBar, required this.showAppBar, required this.isFirstLaunch, required this.showSearch, required this.showKeyboard, required this.keyboardInputPlaceholder, this.lastString, this.activeDeviceName, required this.showRename, this.renameTvId, this.tvCode, this.pairingCode});
   
 
 @override final  bool showStatusBar;
@@ -230,8 +228,6 @@ class MainIdle with DiagnosticableTreeMixin implements MainState {
 @override final  bool showKeyboard;
 @override final  String keyboardInputPlaceholder;
 @override final  String? lastString;
-@override final  bool isTurningOn;
-@override final  bool isTurningOff;
 @override final  String? activeDeviceName;
 @override final  bool showRename;
 @override final  String? renameTvId;
@@ -250,21 +246,21 @@ $MainIdleCopyWith<MainIdle> get copyWith => _$MainIdleCopyWithImpl<MainIdle>(thi
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'MainState.idle'))
-    ..add(DiagnosticsProperty('showStatusBar', showStatusBar))..add(DiagnosticsProperty('showAppBar', showAppBar))..add(DiagnosticsProperty('isFirstLaunch', isFirstLaunch))..add(DiagnosticsProperty('showSearch', showSearch))..add(DiagnosticsProperty('showKeyboard', showKeyboard))..add(DiagnosticsProperty('keyboardInputPlaceholder', keyboardInputPlaceholder))..add(DiagnosticsProperty('lastString', lastString))..add(DiagnosticsProperty('isTurningOn', isTurningOn))..add(DiagnosticsProperty('isTurningOff', isTurningOff))..add(DiagnosticsProperty('activeDeviceName', activeDeviceName))..add(DiagnosticsProperty('showRename', showRename))..add(DiagnosticsProperty('renameTvId', renameTvId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode));
+    ..add(DiagnosticsProperty('showStatusBar', showStatusBar))..add(DiagnosticsProperty('showAppBar', showAppBar))..add(DiagnosticsProperty('isFirstLaunch', isFirstLaunch))..add(DiagnosticsProperty('showSearch', showSearch))..add(DiagnosticsProperty('showKeyboard', showKeyboard))..add(DiagnosticsProperty('keyboardInputPlaceholder', keyboardInputPlaceholder))..add(DiagnosticsProperty('lastString', lastString))..add(DiagnosticsProperty('activeDeviceName', activeDeviceName))..add(DiagnosticsProperty('showRename', showRename))..add(DiagnosticsProperty('renameTvId', renameTvId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainIdle&&(identical(other.showStatusBar, showStatusBar) || other.showStatusBar == showStatusBar)&&(identical(other.showAppBar, showAppBar) || other.showAppBar == showAppBar)&&(identical(other.isFirstLaunch, isFirstLaunch) || other.isFirstLaunch == isFirstLaunch)&&(identical(other.showSearch, showSearch) || other.showSearch == showSearch)&&(identical(other.showKeyboard, showKeyboard) || other.showKeyboard == showKeyboard)&&(identical(other.keyboardInputPlaceholder, keyboardInputPlaceholder) || other.keyboardInputPlaceholder == keyboardInputPlaceholder)&&(identical(other.lastString, lastString) || other.lastString == lastString)&&(identical(other.isTurningOn, isTurningOn) || other.isTurningOn == isTurningOn)&&(identical(other.isTurningOff, isTurningOff) || other.isTurningOff == isTurningOff)&&(identical(other.activeDeviceName, activeDeviceName) || other.activeDeviceName == activeDeviceName)&&(identical(other.showRename, showRename) || other.showRename == showRename)&&(identical(other.renameTvId, renameTvId) || other.renameTvId == renameTvId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainIdle&&(identical(other.showStatusBar, showStatusBar) || other.showStatusBar == showStatusBar)&&(identical(other.showAppBar, showAppBar) || other.showAppBar == showAppBar)&&(identical(other.isFirstLaunch, isFirstLaunch) || other.isFirstLaunch == isFirstLaunch)&&(identical(other.showSearch, showSearch) || other.showSearch == showSearch)&&(identical(other.showKeyboard, showKeyboard) || other.showKeyboard == showKeyboard)&&(identical(other.keyboardInputPlaceholder, keyboardInputPlaceholder) || other.keyboardInputPlaceholder == keyboardInputPlaceholder)&&(identical(other.lastString, lastString) || other.lastString == lastString)&&(identical(other.activeDeviceName, activeDeviceName) || other.activeDeviceName == activeDeviceName)&&(identical(other.showRename, showRename) || other.showRename == showRename)&&(identical(other.renameTvId, renameTvId) || other.renameTvId == renameTvId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,showStatusBar,showAppBar,isFirstLaunch,showSearch,showKeyboard,keyboardInputPlaceholder,lastString,isTurningOn,isTurningOff,activeDeviceName,showRename,renameTvId,tvCode,pairingCode);
+int get hashCode => Object.hash(runtimeType,showStatusBar,showAppBar,isFirstLaunch,showSearch,showKeyboard,keyboardInputPlaceholder,lastString,activeDeviceName,showRename,renameTvId,tvCode,pairingCode);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'MainState.idle(showStatusBar: $showStatusBar, showAppBar: $showAppBar, isFirstLaunch: $isFirstLaunch, showSearch: $showSearch, showKeyboard: $showKeyboard, keyboardInputPlaceholder: $keyboardInputPlaceholder, lastString: $lastString, isTurningOn: $isTurningOn, isTurningOff: $isTurningOff, activeDeviceName: $activeDeviceName, showRename: $showRename, renameTvId: $renameTvId, tvCode: $tvCode, pairingCode: $pairingCode)';
+  return 'MainState.idle(showStatusBar: $showStatusBar, showAppBar: $showAppBar, isFirstLaunch: $isFirstLaunch, showSearch: $showSearch, showKeyboard: $showKeyboard, keyboardInputPlaceholder: $keyboardInputPlaceholder, lastString: $lastString, activeDeviceName: $activeDeviceName, showRename: $showRename, renameTvId: $renameTvId, tvCode: $tvCode, pairingCode: $pairingCode)';
 }
 
 
@@ -275,7 +271,7 @@ abstract mixin class $MainIdleCopyWith<$Res> implements $MainStateCopyWith<$Res>
   factory $MainIdleCopyWith(MainIdle value, $Res Function(MainIdle) _then) = _$MainIdleCopyWithImpl;
 @override @useResult
 $Res call({
- bool showStatusBar, bool showAppBar, bool isFirstLaunch, bool showSearch, bool showKeyboard, String keyboardInputPlaceholder, String? lastString, bool isTurningOn, bool isTurningOff, String? activeDeviceName, bool showRename, String? renameTvId, String? tvCode, String? pairingCode
+ bool showStatusBar, bool showAppBar, bool isFirstLaunch, bool showSearch, bool showKeyboard, String keyboardInputPlaceholder, String? lastString, String? activeDeviceName, bool showRename, String? renameTvId, String? tvCode, String? pairingCode
 });
 
 
@@ -292,7 +288,7 @@ class _$MainIdleCopyWithImpl<$Res>
 
 /// Create a copy of MainState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? showStatusBar = null,Object? showAppBar = null,Object? isFirstLaunch = null,Object? showSearch = null,Object? showKeyboard = null,Object? keyboardInputPlaceholder = null,Object? lastString = freezed,Object? isTurningOn = null,Object? isTurningOff = null,Object? activeDeviceName = freezed,Object? showRename = null,Object? renameTvId = freezed,Object? tvCode = freezed,Object? pairingCode = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? showStatusBar = null,Object? showAppBar = null,Object? isFirstLaunch = null,Object? showSearch = null,Object? showKeyboard = null,Object? keyboardInputPlaceholder = null,Object? lastString = freezed,Object? activeDeviceName = freezed,Object? showRename = null,Object? renameTvId = freezed,Object? tvCode = freezed,Object? pairingCode = freezed,}) {
   return _then(MainIdle(
 showStatusBar: null == showStatusBar ? _self.showStatusBar : showStatusBar // ignore: cast_nullable_to_non_nullable
 as bool,showAppBar: null == showAppBar ? _self.showAppBar : showAppBar // ignore: cast_nullable_to_non_nullable
@@ -301,9 +297,7 @@ as bool,showSearch: null == showSearch ? _self.showSearch : showSearch // ignore
 as bool,showKeyboard: null == showKeyboard ? _self.showKeyboard : showKeyboard // ignore: cast_nullable_to_non_nullable
 as bool,keyboardInputPlaceholder: null == keyboardInputPlaceholder ? _self.keyboardInputPlaceholder : keyboardInputPlaceholder // ignore: cast_nullable_to_non_nullable
 as String,lastString: freezed == lastString ? _self.lastString : lastString // ignore: cast_nullable_to_non_nullable
-as String?,isTurningOn: null == isTurningOn ? _self.isTurningOn : isTurningOn // ignore: cast_nullable_to_non_nullable
-as bool,isTurningOff: null == isTurningOff ? _self.isTurningOff : isTurningOff // ignore: cast_nullable_to_non_nullable
-as bool,activeDeviceName: freezed == activeDeviceName ? _self.activeDeviceName : activeDeviceName // ignore: cast_nullable_to_non_nullable
+as String?,activeDeviceName: freezed == activeDeviceName ? _self.activeDeviceName : activeDeviceName // ignore: cast_nullable_to_non_nullable
 as String?,showRename: null == showRename ? _self.showRename : showRename // ignore: cast_nullable_to_non_nullable
 as bool,renameTvId: freezed == renameTvId ? _self.renameTvId : renameTvId // ignore: cast_nullable_to_non_nullable
 as String?,tvCode: freezed == tvCode ? _self.tvCode : tvCode // ignore: cast_nullable_to_non_nullable

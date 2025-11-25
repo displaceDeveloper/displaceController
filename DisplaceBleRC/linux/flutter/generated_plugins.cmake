@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_volume_controller
   open_file_linux
   sqlite3_flutter_libs
 )

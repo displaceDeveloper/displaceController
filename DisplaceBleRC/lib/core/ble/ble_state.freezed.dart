@@ -137,13 +137,13 @@ return disconnected(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initialized,TResult Function( String? remoteId)?  connecting,TResult Function( String remoteId)?  connected,TResult Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isPoweredOn,  bool isMuted,  int volume,  String? reconnectRemoteId,  int? downloadPercent,  String? newVersion,  String? newVersionUrl)?  paired,TResult Function()?  failedPairing,TResult Function()?  disconnected,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initialized,TResult Function( String? remoteId)?  connecting,TResult Function( String remoteId)?  connected,TResult Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isTurningOn,  bool isTurningOff,  bool isPoweredOn,  bool isMuted,  String? reconnectRemoteId,  bool? showUpdateDialog,  String? newVersion,  String? newVersionUrl,  bool? forceUpdate,  DateTime? lastUpdateNotified)?  paired,TResult Function()?  failedPairing,TResult Function()?  disconnected,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case BleInitialized() when initialized != null:
 return initialized();case BleConnecting() when connecting != null:
 return connecting(_that.remoteId);case BleConnected() when connected != null:
 return connected(_that.remoteId);case BlePaired() when paired != null:
-return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isPoweredOn,_that.isMuted,_that.volume,_that.reconnectRemoteId,_that.downloadPercent,_that.newVersion,_that.newVersionUrl);case BleFailedPairing() when failedPairing != null:
+return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isTurningOn,_that.isTurningOff,_that.isPoweredOn,_that.isMuted,_that.reconnectRemoteId,_that.showUpdateDialog,_that.newVersion,_that.newVersionUrl,_that.forceUpdate,_that.lastUpdateNotified);case BleFailedPairing() when failedPairing != null:
 return failedPairing();case BleDisconnected() when disconnected != null:
 return disconnected();case _:
   return orElse();
@@ -163,13 +163,13 @@ return disconnected();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initialized,required TResult Function( String? remoteId)  connecting,required TResult Function( String remoteId)  connected,required TResult Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isPoweredOn,  bool isMuted,  int volume,  String? reconnectRemoteId,  int? downloadPercent,  String? newVersion,  String? newVersionUrl)  paired,required TResult Function()  failedPairing,required TResult Function()  disconnected,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initialized,required TResult Function( String? remoteId)  connecting,required TResult Function( String remoteId)  connected,required TResult Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isTurningOn,  bool isTurningOff,  bool isPoweredOn,  bool isMuted,  String? reconnectRemoteId,  bool? showUpdateDialog,  String? newVersion,  String? newVersionUrl,  bool? forceUpdate,  DateTime? lastUpdateNotified)  paired,required TResult Function()  failedPairing,required TResult Function()  disconnected,}) {final _that = this;
 switch (_that) {
 case BleInitialized():
 return initialized();case BleConnecting():
 return connecting(_that.remoteId);case BleConnected():
 return connected(_that.remoteId);case BlePaired():
-return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isPoweredOn,_that.isMuted,_that.volume,_that.reconnectRemoteId,_that.downloadPercent,_that.newVersion,_that.newVersionUrl);case BleFailedPairing():
+return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isTurningOn,_that.isTurningOff,_that.isPoweredOn,_that.isMuted,_that.reconnectRemoteId,_that.showUpdateDialog,_that.newVersion,_that.newVersionUrl,_that.forceUpdate,_that.lastUpdateNotified);case BleFailedPairing():
 return failedPairing();case BleDisconnected():
 return disconnected();}
 }
@@ -185,13 +185,13 @@ return disconnected();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initialized,TResult? Function( String? remoteId)?  connecting,TResult? Function( String remoteId)?  connected,TResult? Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isPoweredOn,  bool isMuted,  int volume,  String? reconnectRemoteId,  int? downloadPercent,  String? newVersion,  String? newVersionUrl)?  paired,TResult? Function()?  failedPairing,TResult? Function()?  disconnected,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initialized,TResult? Function( String? remoteId)?  connecting,TResult? Function( String remoteId)?  connected,TResult? Function( String remoteId,  String tvCode,  String pairingCode,  BluetoothCharacteristic rxCharacteristic,  BluetoothCharacteristic txCharacteristic,  bool isTurningOn,  bool isTurningOff,  bool isPoweredOn,  bool isMuted,  String? reconnectRemoteId,  bool? showUpdateDialog,  String? newVersion,  String? newVersionUrl,  bool? forceUpdate,  DateTime? lastUpdateNotified)?  paired,TResult? Function()?  failedPairing,TResult? Function()?  disconnected,}) {final _that = this;
 switch (_that) {
 case BleInitialized() when initialized != null:
 return initialized();case BleConnecting() when connecting != null:
 return connecting(_that.remoteId);case BleConnected() when connected != null:
 return connected(_that.remoteId);case BlePaired() when paired != null:
-return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isPoweredOn,_that.isMuted,_that.volume,_that.reconnectRemoteId,_that.downloadPercent,_that.newVersion,_that.newVersionUrl);case BleFailedPairing() when failedPairing != null:
+return paired(_that.remoteId,_that.tvCode,_that.pairingCode,_that.rxCharacteristic,_that.txCharacteristic,_that.isTurningOn,_that.isTurningOff,_that.isPoweredOn,_that.isMuted,_that.reconnectRemoteId,_that.showUpdateDialog,_that.newVersion,_that.newVersionUrl,_that.forceUpdate,_that.lastUpdateNotified);case BleFailedPairing() when failedPairing != null:
 return failedPairing();case BleDisconnected() when disconnected != null:
 return disconnected();case _:
   return null;
@@ -387,7 +387,7 @@ as String,
 
 
 class BlePaired with DiagnosticableTreeMixin implements BleState {
-  const BlePaired({required this.remoteId, required this.tvCode, required this.pairingCode, required this.rxCharacteristic, required this.txCharacteristic, required this.isPoweredOn, required this.isMuted, required this.volume, this.reconnectRemoteId, this.downloadPercent, this.newVersion, this.newVersionUrl});
+  const BlePaired({required this.remoteId, required this.tvCode, required this.pairingCode, required this.rxCharacteristic, required this.txCharacteristic, required this.isTurningOn, required this.isTurningOff, required this.isPoweredOn, required this.isMuted, this.reconnectRemoteId, this.showUpdateDialog, this.newVersion, this.newVersionUrl, this.forceUpdate, this.lastUpdateNotified});
   
 
  final  String remoteId;
@@ -396,15 +396,21 @@ class BlePaired with DiagnosticableTreeMixin implements BleState {
  final  BluetoothCharacteristic rxCharacteristic;
  final  BluetoothCharacteristic txCharacteristic;
 // Heartbeat data
+ final  bool isTurningOn;
+ final  bool isTurningOff;
  final  bool isPoweredOn;
  final  bool isMuted;
- final  int volume;
+// bool? nextMutedState,
+// required double volume,
 // Id of the device we are reconnecting to
  final  String? reconnectRemoteId;
 // Upgrade
- final  int? downloadPercent;
+ final  bool? showUpdateDialog;
+// int? downloadPercent,
  final  String? newVersion;
  final  String? newVersionUrl;
+ final  bool? forceUpdate;
+ final  DateTime? lastUpdateNotified;
 
 /// Create a copy of BleState
 /// with the given fields replaced by the non-null parameter values.
@@ -417,21 +423,21 @@ $BlePairedCopyWith<BlePaired> get copyWith => _$BlePairedCopyWithImpl<BlePaired>
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'BleState.paired'))
-    ..add(DiagnosticsProperty('remoteId', remoteId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode))..add(DiagnosticsProperty('rxCharacteristic', rxCharacteristic))..add(DiagnosticsProperty('txCharacteristic', txCharacteristic))..add(DiagnosticsProperty('isPoweredOn', isPoweredOn))..add(DiagnosticsProperty('isMuted', isMuted))..add(DiagnosticsProperty('volume', volume))..add(DiagnosticsProperty('reconnectRemoteId', reconnectRemoteId))..add(DiagnosticsProperty('downloadPercent', downloadPercent))..add(DiagnosticsProperty('newVersion', newVersion))..add(DiagnosticsProperty('newVersionUrl', newVersionUrl));
+    ..add(DiagnosticsProperty('remoteId', remoteId))..add(DiagnosticsProperty('tvCode', tvCode))..add(DiagnosticsProperty('pairingCode', pairingCode))..add(DiagnosticsProperty('rxCharacteristic', rxCharacteristic))..add(DiagnosticsProperty('txCharacteristic', txCharacteristic))..add(DiagnosticsProperty('isTurningOn', isTurningOn))..add(DiagnosticsProperty('isTurningOff', isTurningOff))..add(DiagnosticsProperty('isPoweredOn', isPoweredOn))..add(DiagnosticsProperty('isMuted', isMuted))..add(DiagnosticsProperty('reconnectRemoteId', reconnectRemoteId))..add(DiagnosticsProperty('showUpdateDialog', showUpdateDialog))..add(DiagnosticsProperty('newVersion', newVersion))..add(DiagnosticsProperty('newVersionUrl', newVersionUrl))..add(DiagnosticsProperty('forceUpdate', forceUpdate))..add(DiagnosticsProperty('lastUpdateNotified', lastUpdateNotified));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BlePaired&&(identical(other.remoteId, remoteId) || other.remoteId == remoteId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode)&&(identical(other.rxCharacteristic, rxCharacteristic) || other.rxCharacteristic == rxCharacteristic)&&(identical(other.txCharacteristic, txCharacteristic) || other.txCharacteristic == txCharacteristic)&&(identical(other.isPoweredOn, isPoweredOn) || other.isPoweredOn == isPoweredOn)&&(identical(other.isMuted, isMuted) || other.isMuted == isMuted)&&(identical(other.volume, volume) || other.volume == volume)&&(identical(other.reconnectRemoteId, reconnectRemoteId) || other.reconnectRemoteId == reconnectRemoteId)&&(identical(other.downloadPercent, downloadPercent) || other.downloadPercent == downloadPercent)&&(identical(other.newVersion, newVersion) || other.newVersion == newVersion)&&(identical(other.newVersionUrl, newVersionUrl) || other.newVersionUrl == newVersionUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BlePaired&&(identical(other.remoteId, remoteId) || other.remoteId == remoteId)&&(identical(other.tvCode, tvCode) || other.tvCode == tvCode)&&(identical(other.pairingCode, pairingCode) || other.pairingCode == pairingCode)&&(identical(other.rxCharacteristic, rxCharacteristic) || other.rxCharacteristic == rxCharacteristic)&&(identical(other.txCharacteristic, txCharacteristic) || other.txCharacteristic == txCharacteristic)&&(identical(other.isTurningOn, isTurningOn) || other.isTurningOn == isTurningOn)&&(identical(other.isTurningOff, isTurningOff) || other.isTurningOff == isTurningOff)&&(identical(other.isPoweredOn, isPoweredOn) || other.isPoweredOn == isPoweredOn)&&(identical(other.isMuted, isMuted) || other.isMuted == isMuted)&&(identical(other.reconnectRemoteId, reconnectRemoteId) || other.reconnectRemoteId == reconnectRemoteId)&&(identical(other.showUpdateDialog, showUpdateDialog) || other.showUpdateDialog == showUpdateDialog)&&(identical(other.newVersion, newVersion) || other.newVersion == newVersion)&&(identical(other.newVersionUrl, newVersionUrl) || other.newVersionUrl == newVersionUrl)&&(identical(other.forceUpdate, forceUpdate) || other.forceUpdate == forceUpdate)&&(identical(other.lastUpdateNotified, lastUpdateNotified) || other.lastUpdateNotified == lastUpdateNotified));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,remoteId,tvCode,pairingCode,rxCharacteristic,txCharacteristic,isPoweredOn,isMuted,volume,reconnectRemoteId,downloadPercent,newVersion,newVersionUrl);
+int get hashCode => Object.hash(runtimeType,remoteId,tvCode,pairingCode,rxCharacteristic,txCharacteristic,isTurningOn,isTurningOff,isPoweredOn,isMuted,reconnectRemoteId,showUpdateDialog,newVersion,newVersionUrl,forceUpdate,lastUpdateNotified);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'BleState.paired(remoteId: $remoteId, tvCode: $tvCode, pairingCode: $pairingCode, rxCharacteristic: $rxCharacteristic, txCharacteristic: $txCharacteristic, isPoweredOn: $isPoweredOn, isMuted: $isMuted, volume: $volume, reconnectRemoteId: $reconnectRemoteId, downloadPercent: $downloadPercent, newVersion: $newVersion, newVersionUrl: $newVersionUrl)';
+  return 'BleState.paired(remoteId: $remoteId, tvCode: $tvCode, pairingCode: $pairingCode, rxCharacteristic: $rxCharacteristic, txCharacteristic: $txCharacteristic, isTurningOn: $isTurningOn, isTurningOff: $isTurningOff, isPoweredOn: $isPoweredOn, isMuted: $isMuted, reconnectRemoteId: $reconnectRemoteId, showUpdateDialog: $showUpdateDialog, newVersion: $newVersion, newVersionUrl: $newVersionUrl, forceUpdate: $forceUpdate, lastUpdateNotified: $lastUpdateNotified)';
 }
 
 
@@ -442,7 +448,7 @@ abstract mixin class $BlePairedCopyWith<$Res> implements $BleStateCopyWith<$Res>
   factory $BlePairedCopyWith(BlePaired value, $Res Function(BlePaired) _then) = _$BlePairedCopyWithImpl;
 @useResult
 $Res call({
- String remoteId, String tvCode, String pairingCode, BluetoothCharacteristic rxCharacteristic, BluetoothCharacteristic txCharacteristic, bool isPoweredOn, bool isMuted, int volume, String? reconnectRemoteId, int? downloadPercent, String? newVersion, String? newVersionUrl
+ String remoteId, String tvCode, String pairingCode, BluetoothCharacteristic rxCharacteristic, BluetoothCharacteristic txCharacteristic, bool isTurningOn, bool isTurningOff, bool isPoweredOn, bool isMuted, String? reconnectRemoteId, bool? showUpdateDialog, String? newVersion, String? newVersionUrl, bool? forceUpdate, DateTime? lastUpdateNotified
 });
 
 
@@ -459,21 +465,24 @@ class _$BlePairedCopyWithImpl<$Res>
 
 /// Create a copy of BleState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? remoteId = null,Object? tvCode = null,Object? pairingCode = null,Object? rxCharacteristic = null,Object? txCharacteristic = null,Object? isPoweredOn = null,Object? isMuted = null,Object? volume = null,Object? reconnectRemoteId = freezed,Object? downloadPercent = freezed,Object? newVersion = freezed,Object? newVersionUrl = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? remoteId = null,Object? tvCode = null,Object? pairingCode = null,Object? rxCharacteristic = null,Object? txCharacteristic = null,Object? isTurningOn = null,Object? isTurningOff = null,Object? isPoweredOn = null,Object? isMuted = null,Object? reconnectRemoteId = freezed,Object? showUpdateDialog = freezed,Object? newVersion = freezed,Object? newVersionUrl = freezed,Object? forceUpdate = freezed,Object? lastUpdateNotified = freezed,}) {
   return _then(BlePaired(
 remoteId: null == remoteId ? _self.remoteId : remoteId // ignore: cast_nullable_to_non_nullable
 as String,tvCode: null == tvCode ? _self.tvCode : tvCode // ignore: cast_nullable_to_non_nullable
 as String,pairingCode: null == pairingCode ? _self.pairingCode : pairingCode // ignore: cast_nullable_to_non_nullable
 as String,rxCharacteristic: null == rxCharacteristic ? _self.rxCharacteristic : rxCharacteristic // ignore: cast_nullable_to_non_nullable
 as BluetoothCharacteristic,txCharacteristic: null == txCharacteristic ? _self.txCharacteristic : txCharacteristic // ignore: cast_nullable_to_non_nullable
-as BluetoothCharacteristic,isPoweredOn: null == isPoweredOn ? _self.isPoweredOn : isPoweredOn // ignore: cast_nullable_to_non_nullable
+as BluetoothCharacteristic,isTurningOn: null == isTurningOn ? _self.isTurningOn : isTurningOn // ignore: cast_nullable_to_non_nullable
+as bool,isTurningOff: null == isTurningOff ? _self.isTurningOff : isTurningOff // ignore: cast_nullable_to_non_nullable
+as bool,isPoweredOn: null == isPoweredOn ? _self.isPoweredOn : isPoweredOn // ignore: cast_nullable_to_non_nullable
 as bool,isMuted: null == isMuted ? _self.isMuted : isMuted // ignore: cast_nullable_to_non_nullable
-as bool,volume: null == volume ? _self.volume : volume // ignore: cast_nullable_to_non_nullable
-as int,reconnectRemoteId: freezed == reconnectRemoteId ? _self.reconnectRemoteId : reconnectRemoteId // ignore: cast_nullable_to_non_nullable
-as String?,downloadPercent: freezed == downloadPercent ? _self.downloadPercent : downloadPercent // ignore: cast_nullable_to_non_nullable
-as int?,newVersion: freezed == newVersion ? _self.newVersion : newVersion // ignore: cast_nullable_to_non_nullable
+as bool,reconnectRemoteId: freezed == reconnectRemoteId ? _self.reconnectRemoteId : reconnectRemoteId // ignore: cast_nullable_to_non_nullable
+as String?,showUpdateDialog: freezed == showUpdateDialog ? _self.showUpdateDialog : showUpdateDialog // ignore: cast_nullable_to_non_nullable
+as bool?,newVersion: freezed == newVersion ? _self.newVersion : newVersion // ignore: cast_nullable_to_non_nullable
 as String?,newVersionUrl: freezed == newVersionUrl ? _self.newVersionUrl : newVersionUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,forceUpdate: freezed == forceUpdate ? _self.forceUpdate : forceUpdate // ignore: cast_nullable_to_non_nullable
+as bool?,lastUpdateNotified: freezed == lastUpdateNotified ? _self.lastUpdateNotified : lastUpdateNotified // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

@@ -53,7 +53,8 @@ class BleServiceFake implements BleService {
         pairingCode: "123456",
         isMuted: false,
         isPoweredOn: false,
-        volume: 0
+        isTurningOff: false,
+        isTurningOn: false,
       ),
     );
   }
@@ -106,4 +107,22 @@ class BleServiceFake implements BleService {
   void updateDownloadPercent(int percent) {
     logBle.info("updateDownloadPercent() called with percent=$percent");
   }
+
+  @override
+  void toggleMute() {
+    logBle.info("toggleMute() called");
+  }
+
+  @override
+  void turnOnTv() {
+    logBle.info("turnOnTv() called");
+  }
+
+  @override
+  void turnOffTv() {
+    logBle.info("turnOffTv() called");
+  }
+
+  @override
+  void showUpdateDialog(bool show) {}
 }

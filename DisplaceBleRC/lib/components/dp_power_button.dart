@@ -1,6 +1,5 @@
 import 'package:displacerc/core/ble/ble_providers.dart';
 import 'package:displacerc/core/ble/ble_state.dart';
-import 'package:displacerc/screens/main/main_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,11 +32,11 @@ class _DpPowerButtonState extends ConsumerState<DpPowerButton> {
 
   @override
   Widget build(BuildContext context) {
-    var mainState = ref.watch(mainProvider);
-    bool loading =
-        mainState.isTurningOn == true || mainState.isTurningOff == true;
-
     var bleState = ref.watch(bleControllerProvider);
+    bool loading =
+        bleState is BlePaired &&
+        (bleState.isTurningOn == true || bleState.isTurningOff == true);
+
     var current = bleState;
     if (loading == false) {
       if (current is BlePaired) {
@@ -100,7 +99,9 @@ class _DpPowerButtonState extends ConsumerState<DpPowerButton> {
             ),
             Positioned.fill(
               child: GestureDetector(
-                onTap: () { buttonTapHandler(loading); },
+                onTap: () {
+                  buttonTapHandler(loading);
+                },
                 child: Container(color: Colors.transparent),
               ),
             ),
@@ -108,7 +109,9 @@ class _DpPowerButtonState extends ConsumerState<DpPowerButton> {
               duration: const Duration(milliseconds: 50),
               left: _position,
               child: GestureDetector(
-                onTap: () { buttonTapHandler(loading); },
+                onTap: () {
+                  buttonTapHandler(loading);
+                },
                 onHorizontalDragUpdate: (details) {
                   if (loading) {
                     return;

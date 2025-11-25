@@ -58,18 +58,32 @@ message HeartBeatReqEvent {
 }
 
 message HeartBeatRespEvent {
-  optional bool is_powered_on = 1;
-  optional bool is_muted      = 2;
-  optional double volume      = 3;
+  int32 seq = 1;
 }
 
 message UpgradeRequestEvent {
   string new_version = 1;
   string download_url = 2;
+  string min_version = 3;
+  string max_version = 4;
+}
+
+message MuteChangeEvent {
+  bool is_muted = 1;
 }
 
 message VolumeChangeEvent {
   double volume = 1;
+}
+
+message PowerChangeEvent {
+  bool is_powered_on = 1;
+}
+
+message StateUpdatedEvent {
+  bool is_powered_on = 1;
+  bool is_muted = 2;
+  double volume = 3;
 }
 
 message InputEvent {
@@ -87,11 +101,12 @@ message InputEvent {
 }
 
 message Response {
-  /* oneof payload {
-    HeartBeatRespEvent heart_beat = 1;
+  oneof payload {
+    HeartBeatRespEvent heart_beat       = 1;
     UpgradeRequestEvent upgrade_request = 2;
-  } */
-  
-  HeartBeatRespEvent heart_beat = 1;
-  optional UpgradeRequestEvent upgrade_request = 2;
+    MuteChangeEvent mute_change         = 3;
+    VolumeChangeEvent volume_change     = 4;
+    PowerChangeEvent power_change       = 5;
+    StateUpdatedEvent state_updated     = 6;
+  }
 }

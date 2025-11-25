@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   battery_plus
   connectivity_plus
+  flutter_volume_controller
   permission_handler_windows
   screen_brightness_windows
   sqlite3_flutter_libs

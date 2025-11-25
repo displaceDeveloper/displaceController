@@ -11,8 +11,6 @@ class MainController extends Notifier<MainState> {
       showSearch: false,
       showKeyboard: false,
       keyboardInputPlaceholder: 'start typing ...',
-      isTurningOff: false,
-      isTurningOn: false,
       showRename: false,
     );
   }
@@ -51,22 +49,6 @@ class MainController extends Notifier<MainState> {
     );
   }
 
-  void turnOnTv() {
-    state = state.copyWith(isTurningOn: true);
-
-    Future.delayed(const Duration(seconds: 7), () {
-      state = state.copyWith(isTurningOn: false);
-    });
-  }
-
-  void turnOffTv() {
-    state = state.copyWith(isTurningOff: true);
-
-    Future.delayed(const Duration(seconds: 7), () {
-      state = state.copyWith(isTurningOff: false);
-    });
-  }
-
   void setActiveDeviceName(String deviceName) {
     state = state.copyWith(activeDeviceName: deviceName);
   }
@@ -78,8 +60,4 @@ class MainController extends Notifier<MainState> {
   void hideRenameTv() {
     state = state.copyWith(showRename: false, renameTvId: null);
   }
-
-  /* void toggleMute() {
-    state = state.copyWith(isMuted: !state.isMuted);
-  } */
 }

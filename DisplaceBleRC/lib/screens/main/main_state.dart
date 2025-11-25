@@ -13,8 +13,6 @@ sealed class MainState with _$MainState {
     required bool showKeyboard,
     required String keyboardInputPlaceholder,
     String? lastString,
-    required bool isTurningOn,
-    required bool isTurningOff,
     String? activeDeviceName,
     required bool showRename,
     String? renameTvId,

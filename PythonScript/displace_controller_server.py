@@ -199,6 +199,84 @@ cap = {
 ui = UInput(cap, name="DisplaceTrackpad", bustype=ecodes.BUS_USB)
 
 
+class LocalServer:
+    def __init__(self, host="127.0.0.1",
+                port=6000,
+                mutedChangedCallback=None,
+                powerChangedCallback=None,
+                volumeChangedCallback=None):
+        self.host = host
+        self.port = port
+        self.server_socket = None
+        self.running = True
+        self.mutedChangedCallback = mutedChangedCallback
+        self.powerChangedCallback = powerChangedCallback
+        self.volumeChangedCallback = volumeChangedCallback
+
+    def start_server(self):
+        """Start a local socket server to listen for messages from newRfcommHandler.py."""
+        while True:
+            try:
+                self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Allow reuse of the address
+                self.server_socket.bind((self.host, self.port))
+                self.server_socket.listen(5)
+                print(f"Local server listening on {self.host}:{self.port}")
+                break
+            except OSError as e:
+                print(f"Address already in use. Retrying in 5 seconds... ({e})")
+                time.sleep(5)
+
+        while self.running:
+            try:
+                conn, addr = self.server_socket.accept()
+                print(f"Connection established with {addr}")
+                threading.Thread(target=self.handle_client, args=(conn,), daemon=True).start()
+            except Exception as e:
+                print(f"Error in LocalServer: {e}")
+                break
+
+    def handle_client(self, conn):
+        """Handle incoming messages and forward them to the Arduino server."""
+        try:
+            while True:
+                data = conn.recv(1024).decode("utf-8").strip()
+                if not data:
+                    break
+                print(f"Received from TV app: '{data}'")
+                line = data.strip()
+                parts = line.split(" ")
+                if len(parts) != 2:
+                    continue
+
+                match parts[0]:
+                    case "MUTED":
+                        is_muted = parts[1] == "true"
+                        if self.mutedChangedCallback:
+                            self.mutedChangedCallback(is_muted)
+
+                    case "POWERED":
+                        is_powered = parts[1] == "true"
+                        if self.powerChangedCallback:
+                            self.powerChangedCallback(is_powered)
+
+                    case "VOLUME":
+                        volume = float(parts[1])
+                        if self.volumeChangedCallback:
+                            self.volumeChangedCallback(volume)
+                    
+        except Exception as e:
+            print(f"Client connection error: {e}")
+        finally:
+            conn.close()
+
+    def stop_server(self):
+        """Stop the server."""
+        self.running = False
+        if self.server_socket:
+            self.server_socket.close()
+
+
 def send_msg(obj):
     try:
         return requests.post('http://127.0.0.1:5564/command', json=obj)
@@ -456,35 +534,82 @@ def change_volume(volume: float):
 def check_new_version(current_version: str):
     # Check if a new version availalbe or not
     # - return None if no new version
-    # - return tuple ["new_version", "download_url"] if new version available
-    return ["0.0.44", "http://18.144.58.226/Rc-0.0.44.apk"]
+    # - return tuple ["new_version", "download_url", "min_version", "max_version"] if new version available
+    try:
+        print(f"Checking for new version for {current_version}")
+        obj = requests.get(f"http://18.144.58.226/{current_version}.json").json()
+        new_version = obj.get("newVersion")
+        min_version = obj.get("minVersion")
+        max_version = obj.get("maxVersion")
+        download_url = obj.get("downloadUrl")
+
+        return [new_version, download_url, min_version, max_version]
+    except Exception as e:
+        print(f"Error checking new version: {e}")
+        return None
 
 class App:
     tx_char = None
 
-    thread = None
+    # thread = None
     is_running = True
-    is_muted = False
-    is_powered_on = False
-    volume = 0
+    # is_muted = False
+    # is_powered_on = False
+    # volume = 0
+    first_heartbeat = False
+    app_version = None
 
     @classmethod
-    def get_app_status(cls):
+    def send_app_status(cls):
+        try:
+            ret = send_msg({
+                "command": "getDevInfo"
+            })
+            obj = json.loads(ret.text)
+            print(obj)
+
+            is_muted = obj.get("isMuted", False)
+            is_powered_on = obj.get("isPoweredOn", False)
+            volume = obj.get("volume", 0)
+
+            response = msg_pb2.Response()
+            response.state_updated.is_muted = is_muted
+            response.state_updated.is_powered_on = is_powered_on
+            response.state_updated.volume = volume / 100.0
+            buf = response.SerializeToString()
+            cls.tx_char.set_value(list(buf))            
+
+        except Exception as e:
+            return
+            
+
+    @classmethod
+    def periodic_check_new_version(cls):
         while cls.is_running:
-            try:
-                ret = send_msg({
-                    "command": "getDevInfo"
-                })
-                obj = json.loads(ret.text)
-                print(obj)
+            new_version = None
+            new_version_url = None
 
-                cls.is_muted = obj.get("isMuted", False)
-                cls.is_powered_on = obj.get("isPoweredOn", False)
-                cls.volume = obj.get("volume", 0)
+            if cls.app_version:
+                result = check_new_version(cls.app_version)
+                if result:
+                    print(f"New version available: {result[0]} at {result[1]}")
+                    new_version = result[0]
+                    new_version_url = result[1]
+                    min_version = result[2]
+                    max_version = result[3]
 
-                time.sleep(2)
-            except Exception as e:
-                return
+                    if cls.tx_char:
+                        print("Send upgrade request via BLE")
+                        response = msg_pb2.Response()
+                        response.upgrade_request.new_version = new_version
+                        response.upgrade_request.download_url = new_version_url
+                        response.upgrade_request.min_version = min_version
+                        response.upgrade_request.max_version = max_version
+
+                        buf = response.SerializeToString()
+                        cls.tx_char.set_value(list(buf))
+
+            time.sleep(30)  # Check every 30 seconds
 
 
     @classmethod
@@ -493,7 +618,9 @@ class App:
         notify_controller_connected()
 
         cls.is_running = True
-        cls.thread = threading.Thread(target=cls.get_app_status)
+        cls.first_heartbeat = True
+        cls.app_version = None
+        cls.thread = threading.Thread(target=cls.periodic_check_new_version)
         cls.thread.start()
 
     @classmethod
@@ -501,8 +628,37 @@ class App:
         print(f'[BLE] Disconnected: {dev_addr}')
         notify_controller_disconnected()
         cls.is_running = False
+        cls.first_heartbeat = True
+        cls.app_version = None
         if cls.thread:
             cls.thread.join()
+
+    @classmethod
+    def on_muted_changed(cls, is_muted: bool):
+        print(f"[BLE] Muted changed: {is_muted}")
+
+        response = msg_pb2.Response()
+        response.mute_change.is_muted = is_muted
+        buf = response.SerializeToString()
+        cls.tx_char.set_value(list(buf))
+
+    @classmethod
+    def on_power_changed(cls, is_powered: bool):
+        print(f"[BLE] Power changed: {is_powered}")
+
+        response = msg_pb2.Response()
+        response.power_change.is_powered_on = is_powered
+        buf = response.SerializeToString()
+        cls.tx_char.set_value(list(buf))
+
+    @classmethod
+    def on_volume_changed(cls, volume: float):
+        print(f"[BLE] Volume changed: {volume}")
+
+        response = msg_pb2.Response()
+        response.volume_change.volume = volume
+        buf = response.SerializeToString()
+        cls.tx_char.set_value(list(buf))
 
     @classmethod
     def tx_notify_state(cls, notifying, characteristic):
@@ -512,13 +668,6 @@ class App:
     @classmethod
     def rx_write(cls, value, options):
         data = bytes(value)
-        #try:
-        #    text = data.decode('utf-8')
-        #except UnicodeDecodeError:
-        #    text = repr(data)
-        # print(f'[BLE] RX <= {text}  (len={len(data)})  options={options}')
-
-        # ev = json.loads(text)
         evt = msg_pb2.InputEvent()
         evt.ParseFromString(data)
 
@@ -582,29 +731,19 @@ class App:
                             sound_mute()
 
             case "heart_beat":
-                new_version = None
-                new_version_url = None
-
-                if evt.heart_beat.version:
-                    result = check_new_version(evt.heart_beat.version)
-                    if result:
-                        print(f"New version available: {result[0]} at {result[1]}")
-                        new_version = result[0]
-                        new_version_url = result[1]
+                cls.app_version = evt.heart_beat.version
 
                 if cls.tx_char:
                     print("Replying to heartbeat")
                     response = msg_pb2.Response()
-                    response.heart_beat.is_powered_on = cls.is_powered_on
-                    response.heart_beat.is_muted = cls.is_muted
-                    response.heart_beat.volume = cls.volume
-
-                    if new_version:
-                        response.upgrade_request.new_version = new_version
-                        response.upgrade_request.download_url = new_version_url
+                    response.heart_beat.seq = 0
 
                     buf = response.SerializeToString()
                     cls.tx_char.set_value(list(buf))
+
+                if cls.first_heartbeat:
+                    cls.send_app_status()
+                    cls.first_heartbeat = False
 
             case "volume_change":
                 volume = evt.volume_change.volume
@@ -802,6 +941,15 @@ def _build_and_publish_peripheral(adapter_addr: str, tv_code: str):
     """
     dongle = adapter.Adapter(adapter_addr)
     dongle.alias = tv_code
+
+    local_server = LocalServer(
+        port=7000,
+        mutedChangedCallback=lambda x: App.on_muted_changed(x),
+        powerChangedCallback=lambda x: App.on_power_changed(x),
+        volumeChangedCallback=lambda x: App.on_volume_changed(x)
+    )
+    local_server_thread = threading.Thread(target=local_server.start_server, daemon=True)
+    local_server_thread.start()
 
     periph = peripheral.Peripheral(
         adapter_address=adapter_addr,

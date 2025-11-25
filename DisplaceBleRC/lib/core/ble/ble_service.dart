@@ -25,4 +25,12 @@ abstract class BleService {
   void enableHeartbeat({required bool enable});
 
   void updateDownloadPercent(int percent);
+
+  void toggleMute();
+
+  void turnOnTv();
+  
+  void turnOffTv();
+
+  void showUpdateDialog(bool show);
 }

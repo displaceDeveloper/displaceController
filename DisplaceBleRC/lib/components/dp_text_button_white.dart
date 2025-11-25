@@ -7,6 +7,7 @@ class DpTextButtonWhite extends StatelessWidget {
   final FocusNode? focusNode;
   final bool autofocus;
   final Clip clipBehavior;
+  final Color borderColor;
 
   const DpTextButtonWhite({
     super.key,
@@ -16,6 +17,7 @@ class DpTextButtonWhite extends StatelessWidget {
     this.focusNode,
     this.autofocus = false,
     this.clipBehavior = Clip.none,
+    this.borderColor = Colors.white,
   });
 
   @override
@@ -29,7 +31,7 @@ class DpTextButtonWhite extends StatelessWidget {
         foregroundColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
         side: BorderSide(
-          color: onPressed != null ? Colors.white : Colors.grey.shade700,
+          color: onPressed != null ? borderColor! : Colors.grey.shade700,
         ),
         padding: EdgeInsets.zero,
         minimumSize: Size(120, 45),

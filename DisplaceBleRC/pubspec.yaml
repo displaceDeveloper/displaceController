@@ -58,7 +58,7 @@ dependencies:
   dio: ^5.9.0
   # open_file_plus: ^3.4.1+1
   open_file: ^3.5.10
-  # flutter_volume_controller: ^1.3.4
+  flutter_volume_controller: ^1.3.4
 
 dev_dependencies:
   flutter_test:
